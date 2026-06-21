@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.db.models import Q
@@ -304,6 +304,70 @@ def eliminar_usuario(request, perfil_id):
             messages.error(request, f'Error al eliminar el usuario: {e}')
             
     return redirect('usuarios')
+
+
+@login_required
+def configuraciones_view(request):
+    rol_usuario = obtener_rol_usuario(request.user)
+    perfil = getattr(request.user, 'perfil', None)
+    
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        
+        if action == 'update_profile':
+            tipo_documento = request.POST.get('tipo_documento')
+            numero_documento = request.POST.get('numero_documento')
+            primer_nombre = request.POST.get('primer_nombre')
+            primer_apellido = request.POST.get('primer_apellido')
+            email = request.POST.get('email')
+            numero_ficha = request.POST.get('numero_ficha', '')
+            
+            # Validation for duplicate document number
+            if perfil and numero_documento != perfil.numero_documento:
+                if User.objects.filter(username=numero_documento).exclude(id=request.user.id).exists() or Perfil.objects.filter(numero_documento=numero_documento).exclude(user_id=request.user.id).exists():
+                    messages.error(request, 'El número de documento ya está registrado por otro usuario.')
+                    return redirect('configuraciones')
+            
+            request.user.username = numero_documento
+            request.user.first_name = primer_nombre.strip()
+            request.user.last_name = primer_apellido.strip()
+            request.user.email = email
+            request.user.save()
+            
+            if perfil:
+                perfil.tipo_documento = tipo_documento
+                perfil.numero_documento = numero_documento
+                perfil.numero_ficha = numero_ficha if numero_ficha and perfil.rol == 'aprendiz' else None
+                perfil.save()
+                
+            messages.success(request, 'Perfil actualizado correctamente.')
+            return redirect('configuraciones')
+            
+        elif action == 'change_password':
+            current_password = request.POST.get('current_password')
+            new_password = request.POST.get('new_password')
+            confirm_password = request.POST.get('confirm_password')
+            
+            if not request.user.check_password(current_password):
+                messages.error(request, 'La contraseña actual es incorrecta.')
+                return redirect('configuraciones')
+                
+            if new_password != confirm_password:
+                messages.error(request, 'Las nuevas contraseñas no coinciden.')
+                return redirect('configuraciones')
+                
+            request.user.set_password(new_password)
+            request.user.save()
+            update_session_auth_hash(request, request.user)  # Keep the user logged in
+            messages.success(request, 'Contraseña cambiada exitosamente.')
+            return redirect('configuraciones')
+            
+    context = {
+        'active_tab': 'configuraciones',
+        'rol_usuario': rol_usuario,
+        'perfil': perfil
+    }
+    return render(request, 'configuraciones.html', context)
 
 
 def logout_view(request):

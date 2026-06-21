@@ -14,5 +14,6 @@ urlpatterns = [
     path('dashboard/metas/actualizar/<int:meta_id>/', views.actualizar_progreso_meta, name='actualizar_progreso_meta'),
     path('dashboard/metas/editar/<int:meta_id>/', views.editar_meta, name='editar_meta'),
     path('dashboard/metas/eliminar/<int:meta_id>/', views.eliminar_meta, name='eliminar_meta'),
+    path('dashboard/configuraciones/', views.configuraciones_view, name='configuraciones'),
     path('logout/', views.logout_view, name='logout'),
 ]

@@ -1,0 +1,133 @@
+{% extends 'base_dashboard.html' %}
+
+{% block title %}Ajustes - SENA GDF{% endblock %}
+
+{% block extra_css %}
+<style>
+    .config-card {
+        border: none;
+        border-radius: 20px;
+        background-color: white;
+        box-shadow: var(--card-shadow);
+        border: 1px solid rgba(226, 232, 240, 0.8);
+        transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    
+    .config-card:hover {
+        box-shadow: var(--card-shadow-hover);
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: var(--sena-primary) !important;
+        box-shadow: 0 0 0 4px rgba(57, 181, 74, 0.15) !important;
+        background-color: white !important;
+    }
+    
+    .config-header {
+        border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+        padding-bottom: 1.2rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-5 flex-wrap gap-2">
+    <div>
+        <h2 class="fw-bold text-dark mb-1" style="letter-spacing: -0.5px;">Configuraciones de la Cuenta</h2>
+        <p class="text-secondary mb-0" style="font-size: 0.95rem;">Gestiona tus datos personales y actualiza tus credenciales de seguridad.</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Column 1: Profile Settings -->
+    <div class="col-lg-7">
+        <div class="card config-card p-4">
+            <div class="config-header mb-4">
+                <h5 class="fw-bold text-dark mb-1"><i class="bi bi-person-fill text-success me-2"></i>Información del Perfil</h5>
+                <p class="text-muted small mb-0">Modifica tus datos de contacto y detalles registrados en el SENA.</p>
+            </div>
+            
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="update_profile">
+                
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold text-muted-custom small">Tipo de Documento</label>
+                        <select name="tipo_documento" class="form-select" required style="border-radius: 10px;">
+                            <option value="CC" {% if perfil.tipo_documento == 'CC' %}selected{% endif %}>Cédula de Ciudadanía</option>
+                            <option value="TI" {% if perfil.tipo_documento == 'TI' %}selected{% endif %}>Tarjeta de Identidad</option>
+                            <option value="CE" {% if perfil.tipo_documento == 'CE' %}selected{% endif %}>Cédula de Extranjería</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold text-muted-custom small">Número de Documento</label>
+                        <input type="text" name="numero_documento" value="{{ perfil.numero_documento }}" class="form-control" required style="border-radius: 10px;">
+                    </div>
+                </div>
+                
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold text-muted-custom small">Nombres</label>
+                        <input type="text" name="primer_nombre" value="{{ user.first_name }}" class="form-control" required style="border-radius: 10px;">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold text-muted-custom small">Apellidos</label>
+                        <input type="text" name="primer_apellido" value="{{ user.last_name }}" class="form-control" required style="border-radius: 10px;">
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label fw-semibold text-muted-custom small">Correo Electrónico</label>
+                    <input type="email" name="email" value="{{ user.email }}" class="form-control" required style="border-radius: 10px;">
+                </div>
+                
+                {% if perfil.rol == 'aprendiz' %}
+                <div class="mb-4">
+                    <label class="form-label fw-semibold text-muted-custom small">Número de Ficha de Formación</label>
+                    <input type="text" name="numero_ficha" value="{{ perfil.numero_ficha|default:'' }}" class="form-control" style="border-radius: 10px;" placeholder="Ingresa tu número de ficha">
+                </div>
+                {% endif %}
+                
+                <button type="submit" class="btn btn-success border-0 px-4 py-2.5" style="background: linear-gradient(135deg, var(--sena-primary) 0%, var(--sena-dark) 100%); border-radius: 12px; font-weight: 600; box-shadow: 0 4px 12px rgba(57,181,74,0.2) !important;">
+                    Guardar Cambios
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Column 2: Password Change -->
+    <div class="col-lg-5">
+        <div class="card config-card p-4">
+            <div class="config-header mb-4">
+                <h5 class="fw-bold text-dark mb-1"><i class="bi bi-shield-lock-fill text-warning me-2"></i>Seguridad de la Cuenta</h5>
+                <p class="text-muted small mb-0">Actualiza tu contraseña para mantener tu panel seguro.</p>
+            </div>
+            
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="change_password">
+                
+                <div class="mb-3">
+                    <label class="form-label fw-semibold text-muted-custom small">Contraseña Actual</label>
+                    <input type="password" name="current_password" class="form-control" required placeholder="••••••••" style="border-radius: 10px;">
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label fw-semibold text-muted-custom small">Nueva Contraseña</label>
+                    <input type="password" name="new_password" class="form-control" required placeholder="••••••••" style="border-radius: 10px;">
+                </div>
+                
+                <div class="mb-4">
+                    <label class="form-label fw-semibold text-muted-custom small">Confirmar Nueva Contraseña</label>
+                    <input type="password" name="confirm_password" class="form-control" required placeholder="••••••••" style="border-radius: 10px;">
+                </div>
+                
+                <button type="submit" class="btn btn-warning border-0 px-4 py-2.5 text-white" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); border-radius: 12px; font-weight: 600; box-shadow: 0 4px 12px rgba(217,119,6,0.2) !important;">
+                    Actualizar Contraseña
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
