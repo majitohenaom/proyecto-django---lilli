@@ -102,8 +102,15 @@
                     </td>
                     {% if rol_usuario == 'administrador' %}
                     <td class="py-3.5 pe-4 text-end">
-                        <button class="btn btn-outline-success btn-sm me-1.5" style="border-radius: 8px; font-weight: 600; border-width: 1.5px; font-size: 0.82rem;"
-                                onclick="openEditUsuarioModal('{{ perfil.id }}', '{{ perfil.user.first_name }}', '{{ perfil.user.last_name }}', '{{ perfil.user.email }}', '{{ perfil.rol }}', '{{ perfil.numero_ficha|default:'' }}')">
+                        <button class="btn btn-outline-success btn-sm me-1.5 edit-user-btn" style="border-radius: 8px; font-weight: 600; border-width: 1.5px; font-size: 0.82rem;"
+                                data-id="{{ perfil.id }}"
+                                data-tipo-documento="{{ perfil.tipo_documento }}"
+                                data-numero-documento="{{ perfil.numero_documento }}"
+                                data-first-name="{{ perfil.user.first_name }}"
+                                data-last-name="{{ perfil.user.last_name }}"
+                                data-email="{{ perfil.user.email }}"
+                                data-rol="{{ perfil.rol }}"
+                                data-ficha="{{ perfil.numero_ficha|default:'' }}">
                             <i class="bi bi-pencil-fill me-1"></i> Editar
                         </button>
                         {% if perfil.user != request.user %}
@@ -143,6 +150,20 @@
             <form id="formEditarUsuario" method="POST">
                 {% csrf_token %}
                 <div class="modal-body px-4 py-3">
+                    <div class="row g-2 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold text-muted-custom small">Tipo de Documento</label>
+                            <select id="editTipoDocumento" name="tipo_documento" class="form-select" required style="border-radius: 10px;">
+                                <option value="CC">Cédula de Ciudadanía</option>
+                                <option value="TI">Tarjeta de Identidad</option>
+                                <option value="CE">Cédula de Extranjería</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold text-muted-custom small">Número de Documento</label>
+                            <input type="text" id="editNumeroDocumento" name="numero_documento" class="form-control" required style="border-radius: 10px;">
+                        </div>
+                    </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold text-muted-custom small">Nombres</label>
                         <input type="text" id="editNombres" name="primer_nombre" class="form-control" required style="border-radius: 10px;">
@@ -182,20 +203,35 @@
 {% block extra_js %}
 {% if rol_usuario == 'administrador' %}
 <script>
-    function openEditUsuarioModal(id, nombres, apellidos, email, rol, ficha) {
-        document.getElementById('editNombres').value = nombres;
-        document.getElementById('editApellidos').value = apellidos;
-        document.getElementById('editEmail').value = email;
-        document.getElementById('editRol').value = rol;
-        document.getElementById('editFicha').value = ficha;
-        
-        document.getElementById('formEditarUsuario').action = `/dashboard/usuarios/editar/${id}/`;
-        
-        toggleFichaEditField();
-        
-        const editModal = new bootstrap.Modal(document.getElementById('modalEditarUsuario'));
-        editModal.show();
-    }
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.edit-user-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const id = this.getAttribute('data-id');
+                const tipoDoc = this.getAttribute('data-tipo-documento');
+                const numDoc = this.getAttribute('data-numero-documento');
+                const firstName = this.getAttribute('data-first-name');
+                const lastName = this.getAttribute('data-last-name');
+                const email = this.getAttribute('data-email');
+                const rol = this.getAttribute('data-rol');
+                const ficha = this.getAttribute('data-ficha');
+                
+                document.getElementById('editTipoDocumento').value = tipoDoc;
+                document.getElementById('editNumeroDocumento').value = numDoc;
+                document.getElementById('editNombres').value = firstName;
+                document.getElementById('editApellidos').value = lastName;
+                document.getElementById('editEmail').value = email;
+                document.getElementById('editRol').value = rol;
+                document.getElementById('editFicha').value = ficha;
+                
+                document.getElementById('formEditarUsuario').action = `/dashboard/usuarios/editar/${id}/`;
+                
+                toggleFichaEditField();
+                
+                const editModal = new bootstrap.Modal(document.getElementById('modalEditarUsuario'));
+                editModal.show();
+            });
+        });
+    });
     
     function toggleFichaEditField() {
         const rolSelect = document.getElementById('editRol');

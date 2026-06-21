@@ -3,6 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.db.models import Q
+from django.contrib.auth.decorators import login_required
 from .models import Perfil, MetaAhorro
 
 def obtener_rol_usuario(user):
@@ -16,6 +17,9 @@ def obtener_rol_usuario(user):
         return 'aprendiz'
 
 def login_view(request):
+    if request.user.is_authenticated:
+        return redirect('dashboard')
+        
     if request.method == 'POST':
         numero = request.POST.get('numero_documento')
         password = request.POST.get('password')
@@ -32,6 +36,9 @@ def login_view(request):
 
 
 def registro_view(request):
+    if request.user.is_authenticated:
+        return redirect('dashboard')
+        
     if request.method == 'POST':
         primer_nombre = request.POST.get('primer_nombre')
         segundo_nombre = request.POST.get('segundo_nombre', '')
@@ -64,7 +71,10 @@ def registro_view(request):
             email=email
         )
 
-        from .models import Perfil
+        if rol == 'administrador':
+            user.is_staff = True
+            user.save()
+
         Perfil.objects.create(
             user=user,
             tipo_documento=tipo_documento,
@@ -79,17 +89,14 @@ def registro_view(request):
     return render(request, 'registro.html')
 
 
+@login_required
 def dashboard(request):
-    if not request.user.is_authenticated:
-        return redirect('login')
     rol_usuario = obtener_rol_usuario(request.user)
     return render(request, 'dashboard.html', {'active_tab': 'novedades', 'rol_usuario': rol_usuario})
 
 
+@login_required
 def usuarios_view(request):
-    if not request.user.is_authenticated:
-        return redirect('login')
-    
     rol_usuario = obtener_rol_usuario(request.user)
     query = request.GET.get('q', '')
     rol_filter = request.GET.get('rol', '')
@@ -121,10 +128,8 @@ def usuarios_view(request):
     return render(request, 'usuarios.html', context)
 
 
+@login_required
 def metas_view(request):
-    if not request.user.is_authenticated:
-        return redirect('login')
-        
     rol_usuario = obtener_rol_usuario(request.user)
     metas = MetaAhorro.objects.filter(user=request.user).order_by('-fecha_creacion')
     
@@ -147,10 +152,8 @@ def metas_view(request):
     return render(request, 'metas.html', context)
 
 
+@login_required
 def crear_meta(request):
-    if not request.user.is_authenticated:
-        return redirect('login')
-        
     if request.method == 'POST':
         nombre = request.POST.get('nombre')
         monto_objetivo = request.POST.get('monto_objetivo')
@@ -172,10 +175,8 @@ def crear_meta(request):
     return redirect('metas')
 
 
+@login_required
 def actualizar_progreso_meta(request, meta_id):
-    if not request.user.is_authenticated:
-        return redirect('login')
-        
     if request.method == 'POST':
         try:
             meta = MetaAhorro.objects.get(id=meta_id, user=request.user)
@@ -191,10 +192,8 @@ def actualizar_progreso_meta(request, meta_id):
     return redirect('metas')
 
 
+@login_required
 def editar_meta(request, meta_id):
-    if not request.user.is_authenticated:
-        return redirect('login')
-        
     if request.method == 'POST':
         try:
             meta = MetaAhorro.objects.get(id=meta_id, user=request.user)
@@ -211,10 +210,8 @@ def editar_meta(request, meta_id):
     return redirect('metas')
 
 
+@login_required
 def eliminar_meta(request, meta_id):
-    if not request.user.is_authenticated:
-        return redirect('login')
-        
     if request.method == 'POST':
         try:
             meta = MetaAhorro.objects.get(id=meta_id, user=request.user)
@@ -229,10 +226,8 @@ def eliminar_meta(request, meta_id):
     return redirect('metas')
 
 
+@login_required
 def editar_usuario(request, perfil_id):
-    if not request.user.is_authenticated:
-        return redirect('login')
-        
     rol_actual = obtener_rol_usuario(request.user)
     if rol_actual != 'administrador':
         messages.error(request, 'No tienes permisos para realizar esta acción.')
@@ -243,19 +238,35 @@ def editar_usuario(request, perfil_id):
             perfil = Perfil.objects.select_related('user').get(id=perfil_id)
             user = perfil.user
             
+            tipo_documento = request.POST.get('tipo_documento')
+            numero_documento = request.POST.get('numero_documento')
             primer_nombre = request.POST.get('primer_nombre')
-            segundo_nombre = request.POST.get('segundo_nombre', '')
             primer_apellido = request.POST.get('primer_apellido')
-            segundo_apellido = request.POST.get('segundo_apellido', '')
             email = request.POST.get('email')
             rol = request.POST.get('rol')
             numero_ficha = request.POST.get('numero_ficha', '')
             
-            user.first_name = f"{primer_nombre} {segundo_nombre}".strip()
-            user.last_name = f"{primer_apellido} {segundo_apellido}".strip()
+            # Validation for duplicate document number
+            if numero_documento != perfil.numero_documento:
+                if User.objects.filter(username=numero_documento).exclude(id=user.id).exists() or Perfil.objects.filter(numero_documento=numero_documento).exclude(id=perfil.id).exists():
+                    messages.error(request, 'El número de documento ya está registrado por otro usuario.')
+                    return redirect('usuarios')
+            
+            user.username = numero_documento
+            user.first_name = primer_nombre.strip()
+            user.last_name = primer_apellido.strip()
             user.email = email
+            
+            if rol == 'administrador':
+                user.is_staff = True
+            else:
+                user.is_staff = False
+                user.is_superuser = False
+                
             user.save()
             
+            perfil.tipo_documento = tipo_documento
+            perfil.numero_documento = numero_documento
             perfil.rol = rol
             perfil.numero_ficha = numero_ficha if numero_ficha and rol == 'aprendiz' else None
             perfil.save()
@@ -269,10 +280,8 @@ def editar_usuario(request, perfil_id):
     return redirect('usuarios')
 
 
+@login_required
 def eliminar_usuario(request, perfil_id):
-    if not request.user.is_authenticated:
-        return redirect('login')
-        
     rol_actual = obtener_rol_usuario(request.user)
     if rol_actual != 'administrador':
         messages.error(request, 'No tienes permisos para realizar esta acción.')
