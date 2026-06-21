@@ -1,0 +1,348 @@
+{% extends 'base_dashboard.html' %}
+{% load humanize %}
+
+{% block title %}Metas de Ahorro - SENA GDF{% endblock %}
+
+{% block extra_css %}
+<style>
+    .stat-card {
+        border: none;
+        border-radius: 16px;
+        background-color: white;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+        border: 1px solid var(--slate-200);
+        padding: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+    
+    .stat-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+    
+    .goal-card {
+        border: none;
+        border-radius: 16px;
+        background-color: white;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+        border: 1px solid var(--slate-200);
+        overflow: hidden;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+    
+    .goal-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+    }
+    
+    .progress-custom {
+        height: 10px;
+        border-radius: 5px;
+        background-color: var(--slate-100);
+        overflow: hidden;
+    }
+    
+    .progress-bar-custom {
+        height: 100%;
+        border-radius: 5px;
+        background: linear-gradient(90deg, var(--sena-primary) 0%, var(--sena-dark) 100%);
+        transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .goal-header {
+        background-color: var(--slate-50);
+        border-bottom: 1px solid var(--slate-100);
+        padding: 1.25rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+        <h2 class="fw-bold text-dark mb-1">Mis Metas de Ahorro</h2>
+        <p class="text-muted mb-0">Define tus objetivos financieros y sigue tu progreso paso a paso.</p>
+    </div>
+    <button class="btn btn-success border-0 px-4 py-2 d-flex align-items-center gap-2 shadow-sm" 
+            style="background-color: var(--sena-primary); border-radius: 12px; font-weight: 600;"
+            data-bs-toggle="modal" data-bs-target="#modalCrearMeta">
+        <i class="bi bi-plus-lg"></i>
+        <span>Nueva Meta</span>
+    </button>
+</div>
+
+<!-- Statistics Row -->
+<div class="row g-3 mb-4 animated-fade-in">
+    <!-- Stat 1: Total Objetivo -->
+    <div class="col-md-4">
+        <div class="stat-card">
+            <div class="stat-icon" style="background-color: #eff6ff; color: #2563eb;">
+                <i class="bi bi-flag-fill"></i>
+            </div>
+            <div>
+                <span class="text-muted small fw-medium d-block">Total Objetivo</span>
+                <h4 class="fw-bold mb-0 text-dark">${{ total_objetivo|intcomma }} COP</h4>
+            </div>
+        </div>
+    </div>
+    <!-- Stat 2: Total Ahorrado -->
+    <div class="col-md-4">
+        <div class="stat-card">
+            <div class="stat-icon" style="background-color: var(--sena-light); color: var(--sena-primary);">
+                <i class="bi bi-wallet2"></i>
+            </div>
+            <div>
+                <span class="text-muted small fw-medium d-block">Total Ahorrado</span>
+                <h4 class="fw-bold mb-0 text-dark">${{ total_ahorrado|intcomma }} COP</h4>
+            </div>
+        </div>
+    </div>
+    <!-- Stat 3: Progreso General -->
+    <div class="col-md-4">
+        <div class="stat-card">
+            <div class="stat-icon" style="background-color: #fffbeb; color: #d97706;">
+                <i class="bi bi-graph-up-arrow"></i>
+            </div>
+            <div class="flex-grow-1">
+                <span class="text-muted small fw-medium d-block">Progreso Promedio</span>
+                <div class="d-flex align-items-center gap-2">
+                    <h4 class="fw-bold mb-0 text-dark">{{ progreso_general }}%</h4>
+                    <div class="progress-custom flex-grow-1" style="height: 6px;">
+                        <div class="progress-bar-custom" style="width: {{ progreso_general }}%; background: #d97706;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Savings Goals Grid -->
+<div class="row g-4 animated-fade-in">
+    {% for meta in metas %}
+    <div class="col-md-6 col-lg-4">
+        <div class="card goal-card h-100">
+            <!-- Goal Header -->
+            <div class="goal-header d-flex justify-content-between align-items-start">
+                <div>
+                    <h5 class="fw-bold text-dark mb-1">{{ meta.nombre }}</h5>
+                    <span class="text-muted small d-flex align-items-center gap-1">
+                        <i class="bi bi-calendar3"></i> Vence: {{ meta.fecha_limite|date:"d M Y" }}
+                    </span>
+                </div>
+                <!-- Dropdown actions -->
+                <div class="dropdown">
+                    <button class="btn btn-link text-muted p-0 border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-three-dots-vertical fs-5"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end border shadow-sm">
+                        <li>
+                            <button class="dropdown-item d-flex align-items-center gap-2 py-2" 
+                                    onclick="openEditModal('{{ meta.id }}', '{{ meta.nombre }}', '{{ meta.monto_objetivo }}', '{{ meta.fecha_limite|date:'Y-m-d' }}')">
+                                <i class="bi bi-pencil text-secondary"></i> Editar Meta
+                            </button>
+                        </li>
+                        <li>
+                            <form method="POST" action="{% url 'eliminar_meta' meta.id %}" onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta meta? Esta acción no se puede deshacer.');">
+                                {% csrf_token %}
+                                <button type="submit" class="dropdown-item text-danger d-flex align-items-center gap-2 py-2">
+                                    <i class="bi bi-trash-fill"></i> Eliminar Meta
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Goal Content -->
+            <div class="card-body p-4">
+                <!-- Money Details -->
+                <div class="d-flex justify-content-between align-items-baseline mb-2">
+                    <div>
+                        <span class="text-muted small d-block">Ahorrado</span>
+                        <span class="fs-5 fw-bold text-success">${{ meta.monto_actual|intcomma }}</span>
+                    </div>
+                    <div class="text-end">
+                        <span class="text-muted small d-block">Objetivo</span>
+                        <span class="fw-semibold text-secondary">${{ meta.monto_objetivo|intcomma }}</span>
+                    </div>
+                </div>
+                
+                <!-- Progress Bar -->
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span class="text-muted small">Progreso de la Meta</span>
+                        <span class="fw-bold text-dark small">{{ meta.progreso }}%</span>
+                    </div>
+                    <div class="progress-custom">
+                        <div class="progress-bar-custom" style="width: {{ meta.progreso }}%;"></div>
+                    </div>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-success btn-sm w-100 py-2" 
+                            style="border-radius: 10px; font-weight: 600; border-width: 1.5px;"
+                            onclick="openAbonoModal('{{ meta.id }}', '{{ meta.nombre }}', '{{ meta.monto_actual }}', '{{ meta.monto_objetivo }}')">
+                        <i class="bi bi-plus-circle me-1"></i> Abonar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12 text-center py-5 text-muted">
+        <div class="mb-3"><i class="bi bi-piggy-bank fs-1 text-black-50"></i></div>
+        <h5>No tienes metas de ahorro todavía</h5>
+        <p class="small mb-4">Empieza a planificar tu futuro financiero hoy mismo agregando tu primera meta.</p>
+        <button class="btn btn-success border-0 px-4 py-2" 
+                style="background-color: var(--sena-primary); border-radius: 12px; font-weight: 600;"
+                data-bs-toggle="modal" data-bs-target="#modalCrearMeta">
+            <i class="bi bi-plus-lg me-1"></i> Crear mi Primera Meta
+        </button>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- MODAL: Crear Meta -->
+<div class="modal fade" id="modalCrearMeta" tabindex="-1" aria-labelledby="modalCrearMetaLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+            <div class="modal-header border-bottom-0 pb-0 ps-4 pt-4">
+                <h5 class="modal-title fw-bold text-dark fs-4" id="modalCrearMetaLabel">Nueva Meta de Ahorro</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="POST" action="{% url 'crear_meta' %}">
+                {% csrf_token %}
+                <div class="modal-body px-4 py-3">
+                    <!-- Nombre Meta -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold text-muted-custom small">¿Qué quieres lograr? (Nombre de la Meta)</label>
+                        <input type="text" name="nombre" class="form-control" placeholder="Ej. Comprar Laptop, Vacaciones, Curso SENA" required style="border-radius: 10px;">
+                    </div>
+                    <!-- Monto Objetivo -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold text-muted-custom small">Monto Objetivo (COP)</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light text-muted border-end-0" style="border-radius: 10px 0 0 10px;">$</span>
+                            <input type="number" step="0.01" name="monto_objetivo" class="form-control border-start-0" placeholder="Ej. 1500000" required style="border-radius: 0 10px 10px 0;">
+                        </div>
+                    </div>
+                    <!-- Monto Actual Inicial -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold text-muted-custom small">Ahorro Inicial (Opcional)</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light text-muted border-end-0" style="border-radius: 10px 0 0 10px;">$</span>
+                            <input type="number" step="0.01" name="monto_actual" class="form-control border-start-0" placeholder="Ej. 100000" style="border-radius: 0 10px 10px 0;">
+                        </div>
+                    </div>
+                    <!-- Fecha Límite -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold text-muted-custom small">Fecha Límite</label>
+                        <input type="date" name="fecha_limite" class="form-control" required style="border-radius: 10px;">
+                    </div>
+                </div>
+                <div class="modal-footer border-top-0 px-4 pb-4 pt-0 d-flex gap-2">
+                    <button type="button" class="btn btn-light w-50 py-2.5" data-bs-dismiss="modal" style="border-radius: 10px; font-weight: 500;">Cancelar</button>
+                    <button type="submit" class="btn btn-success w-50 py-2.5 border-0" style="background-color: var(--sena-primary); border-radius: 10px; font-weight: 600;">Guardar Meta</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: Abonar Ahorro -->
+<div class="modal fade" id="modalAbonar" tabindex="-1" aria-labelledby="modalAbonarLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+            <div class="modal-header border-bottom-0 pb-0 ps-4 pt-4">
+                <h5 class="modal-title fw-bold text-dark fs-5" id="modalAbonarLabel">Registrar Abono</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="formAbonar" method="POST">
+                {% csrf_token %}
+                <div class="modal-body px-4 py-3">
+                    <p class="text-muted small mb-3">Registra un nuevo ahorro para la meta: <strong id="abonoMetaNombre" class="text-dark"></strong></p>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold text-muted-custom small">Cantidad a Abonar (COP)</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light text-muted border-end-0" style="border-radius: 10px 0 0 10px;">$</span>
+                            <input type="number" step="0.01" name="cantidad_abono" class="form-control border-start-0" placeholder="Ej. 50000" required style="border-radius: 0 10px 10px 0;">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-top-0 px-4 pb-4 pt-0 d-flex gap-2">
+                    <button type="button" class="btn btn-light w-50 py-2" data-bs-dismiss="modal" style="border-radius: 10px;">Cerrar</button>
+                    <button type="submit" class="btn btn-success w-50 py-2 border-0" style="background-color: var(--sena-primary); border-radius: 10px; font-weight: 600;">Confirmar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: Editar Meta -->
+<div class="modal fade" id="modalEditarMeta" tabindex="-1" aria-labelledby="modalEditarMetaLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+            <div class="modal-header border-bottom-0 pb-0 ps-4 pt-4">
+                <h5 class="modal-title fw-bold text-dark fs-4" id="modalEditarMetaLabel">Editar Meta de Ahorro</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="formEditarMeta" method="POST">
+                {% csrf_token %}
+                <div class="modal-body px-4 py-3">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold text-muted-custom small">Nombre de la Meta</label>
+                        <input type="text" id="editNombre" name="nombre" class="form-control" required style="border-radius: 10px;">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold text-muted-custom small">Monto Objetivo (COP)</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light text-muted border-end-0" style="border-radius: 10px 0 0 10px;">$</span>
+                            <input type="number" step="0.01" id="editMontoObjetivo" name="monto_objetivo" class="form-control border-start-0" required style="border-radius: 0 10px 10px 0;">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold text-muted-custom small">Fecha Límite</label>
+                        <input type="date" id="editFechaLimite" name="fecha_limite" class="form-control" required style="border-radius: 10px;">
+                    </div>
+                </div>
+                <div class="modal-footer border-top-0 px-4 pb-4 pt-0 d-flex gap-2">
+                    <button type="button" class="btn btn-light w-50 py-2.5" data-bs-dismiss="modal" style="border-radius: 10px;">Cancelar</button>
+                    <button type="submit" class="btn btn-success w-50 py-2.5 border-0" style="background-color: var(--sena-primary); border-radius: 10px; font-weight: 600;">Actualizar Meta</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function openAbonoModal(id, nombre, actual, objetivo) {
+        document.getElementById('abonoMetaNombre').textContent = nombre;
+        document.getElementById('formAbonar').action = `/dashboard/metas/actualizar/${id}/`;
+        
+        const myModal = new bootstrap.Modal(document.getElementById('modalAbonar'));
+        myModal.show();
+    }
+    
+    function openEditModal(id, nombre, objetivo, fecha) {
+        document.getElementById('editNombre').value = nombre;
+        document.getElementById('editMontoObjetivo').value = parseFloat(objetivo.replace(',', '.'));
+        document.getElementById('editFechaLimite').value = fecha;
+        
+        document.getElementById('formEditarMeta').action = `/dashboard/metas/editar/${id}/`;
+        
+        const editModal = new bootstrap.Modal(document.getElementById('modalEditarMeta'));
+        editModal.show();
+    }
+</script>
+{% endblock %}
