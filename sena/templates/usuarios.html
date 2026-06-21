@@ -16,16 +16,16 @@
 </div>
 
 <!-- Search Bar & Filters -->
-<div class="card premium-card mb-4 p-3">
-    <form method="GET" class="row g-2 align-items-center">
+<div class="card premium-card mb-5 p-4" style="background-color: white; border-radius: 20px;">
+    <form method="GET" class="row g-3 align-items-center">
         <div class="col-md-6 col-lg-8">
             <div class="input-group">
-                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-search"></i></span>
-                <input type="text" name="q" value="{{ query|default:'' }}" class="form-control border-start-0 bg-light" placeholder="Buscar por nombre, documento o correo..." style="font-size: 0.95rem;">
+                <span class="input-group-text bg-light border-end-0 text-muted" style="border-radius: 12px 0 0 12px; border-color: rgba(226,232,240,0.8);"><i class="bi bi-search"></i></span>
+                <input type="text" name="q" value="{{ query|default:'' }}" class="form-control border-start-0 bg-light" placeholder="Buscar por nombre, documento o correo..." style="font-size: 0.95rem; border-radius: 0 12px 12px 0; border-color: rgba(226,232,240,0.8); padding: 0.7rem 1rem;">
             </div>
         </div>
         <div class="col-md-4 col-lg-3">
-            <select name="rol" class="form-select bg-light" style="font-size: 0.95rem;">
+            <select name="rol" class="form-select bg-light" style="font-size: 0.95rem; border-radius: 12px; border-color: rgba(226,232,240,0.8); padding: 0.7rem 1rem;">
                 <option value="">Todos los Roles</option>
                 <option value="aprendiz" {% if rol_filter == 'aprendiz' %}selected{% endif %}>Aprendiz</option>
                 <option value="instructor" {% if rol_filter == 'instructor' %}selected{% endif %}>Instructor</option>
@@ -33,7 +33,7 @@
             </select>
         </div>
         <div class="col-md-2 col-lg-1">
-            <button type="submit" class="btn btn-success w-100 border-0 py-2" style="background-color: var(--sena-primary); border-radius: 8px; font-weight: 500;">
+            <button type="submit" class="btn btn-success w-100 border-0 py-2.5" style="background: linear-gradient(135deg, var(--sena-primary) 0%, var(--sena-dark) 100%); border-radius: 12px; font-weight: 600; box-shadow: 0 4px 12px rgba(57,181,74,0.2) !important;">
                 Filtrar
             </button>
         </div>
@@ -41,23 +41,23 @@
 </div>
 
 <!-- User Table Card -->
-<div class="card premium-card overflow-hidden">
+<div class="card premium-card overflow-hidden" style="border-radius: 20px;">
     <div class="table-responsive">
         <table class="table table-hover align-middle mb-0" style="font-size: 0.92rem;">
-            <thead class="table-light text-muted uppercase fs-7">
+            <thead class="table-light text-secondary uppercase fs-7" style="border-bottom: 2px solid rgba(226,232,240,0.8);">
                 <tr>
-                    <th class="ps-4 py-3">Nombre Completo</th>
-                    <th class="py-3">Documento</th>
-                    <th class="py-3">Email</th>
-                    <th class="py-3">Rol</th>
-                    <th class="py-3">Ficha</th>
-                    <th class="py-3 pe-4 text-end">Registro</th>
+                    <th class="ps-4 py-3.5" style="font-weight: 600;">Nombre Completo</th>
+                    <th class="py-3.5" style="font-weight: 600;">Documento</th>
+                    <th class="py-3.5" style="font-weight: 600;">Email</th>
+                    <th class="py-3.5" style="font-weight: 600;">Rol</th>
+                    <th class="py-3.5" style="font-weight: 600;">Ficha</th>
+                    <th class="py-3.5 pe-4 text-end" style="font-weight: 600;">Registro</th>
                 </tr>
             </thead>
             <tbody>
                 {% for perfil in perfiles %}
-                <tr>
-                    <td class="ps-4 py-3">
+                <tr style="transition: background-color 0.2s ease;">
+                    <td class="ps-4 py-3.5">
                         <div class="d-flex align-items-center gap-3">
                             <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold text-white shadow-sm" 
                                  style="width: 38px; height: 38px; font-size: 0.9rem;
@@ -65,48 +65,48 @@
                                 {{ perfil.user.first_name|slice:":1" }}{{ perfil.user.last_name|slice:":1" }}
                             </div>
                             <div>
-                                <h6 class="mb-0 fw-semibold text-dark">{{ perfil.user.get_full_name }}</h6>
-                                <span class="text-muted small">@{{ perfil.user.username }}</span>
+                                <h6 class="mb-0 fw-bold text-dark" style="letter-spacing: -0.2px;">{{ perfil.user.get_full_name }}</h6>
+                                <span class="text-secondary small" style="font-size: 0.8rem;">@{{ perfil.user.username }}</span>
                             </div>
                         </div>
                     </td>
-                    <td class="py-3">
-                        <span class="text-secondary fw-semibold">{{ perfil.tipo_documento }}</span> 
-                        <span class="text-muted">{{ perfil.numero_documento }}</span>
+                    <td class="py-3.5">
+                        <span class="text-secondary fw-semibold" style="font-size: 0.85rem;">{{ perfil.tipo_documento }}</span> 
+                        <span class="text-secondary" style="font-size: 0.88rem;">{{ perfil.numero_documento }}</span>
                     </td>
-                    <td class="py-3 text-secondary">{{ perfil.user.email }}</td>
-                    <td class="py-3">
+                    <td class="py-3.5 text-secondary">{{ perfil.user.email }}</td>
+                    <td class="py-3.5">
                         {% if perfil.rol == 'coordinador' %}
-                            <span class="badge rounded-pill bg-violet-subtle text-violet border border-violet-subtle px-2.5 py-1" style="color: #6d28d9; background-color: #f5f3ff; border-color: #ddd6fe !important;">
+                            <span class="badge rounded-pill bg-violet-subtle text-violet border border-violet-subtle px-3 py-1.5" style="color: #6d28d9; background-color: #f5f3ff; border-color: #ddd6fe !important; font-weight: 600; font-size: 0.72rem;">
                                 <i class="bi bi-shield-fill-check me-1"></i> Coordinador
                             </span>
                         {% elif perfil.rol == 'instructor' %}
-                            <span class="badge rounded-pill bg-emerald-subtle text-emerald border border-emerald-subtle px-2.5 py-1" style="color: #047857; background-color: #ecfdf5; border-color: #a7f3d0 !important;">
+                            <span class="badge rounded-pill bg-emerald-subtle text-emerald border border-emerald-subtle px-3 py-1.5" style="color: #047857; background-color: #ecfdf5; border-color: #a7f3d0 !important; font-weight: 600; font-size: 0.72rem;">
                                 <i class="bi bi-mortarboard-fill me-1"></i> Instructor
                             </span>
                         {% else %}
-                            <span class="badge rounded-pill bg-blue-subtle text-blue border border-blue-subtle px-2.5 py-1" style="color: #1d4ed8; background-color: #eff6ff; border-color: #bfdbfe !important;">
+                            <span class="badge rounded-pill bg-blue-subtle text-blue border border-blue-subtle px-3 py-1.5" style="color: #1d4ed8; background-color: #eff6ff; border-color: #bfdbfe !important; font-weight: 600; font-size: 0.72rem;">
                                 <i class="bi bi-person-fill me-1"></i> Aprendiz
                             </span>
                         {% endif %}
                     </td>
-                    <td class="py-3 text-muted">
+                    <td class="py-3.5 text-secondary">
                         {% if perfil.numero_ficha %}
-                            <span class="badge bg-light text-dark border">{{ perfil.numero_ficha }}</span>
+                            <span class="badge bg-light text-dark border px-2.5 py-1.5" style="font-size: 0.75rem; border-radius: 6px;">{{ perfil.numero_ficha }}</span>
                         {% else %}
                             <span class="text-black-50">—</span>
                         {% endif %}
                     </td>
-                    <td class="py-3 pe-4 text-end text-muted small">
+                    <td class="py-3.5 pe-4 text-end text-secondary small">
                         {{ perfil.fecha_registro|date:"d M Y, h:i A" }}
                     </td>
                 </tr>
                 {% empty %}
                 <tr>
                     <td colspan="6" class="text-center py-5 text-muted">
-                        <div class="mb-2"><i class="bi bi-people fs-1 text-black-50"></i></div>
-                        <h6>No se encontraron usuarios</h6>
-                        <p class="small mb-0">Prueba ajustando los filtros de búsqueda.</p>
+                        <div class="mb-3"><i class="bi bi-people fs-1 text-black-50"></i></div>
+                        <h6 class="fw-bold text-dark">No se encontraron usuarios</h6>
+                        <p class="small mb-0 text-secondary">Prueba ajustando los filtros de búsqueda o el texto ingresado.</p>
                     </td>
                 </tr>
                 {% endfor %}
