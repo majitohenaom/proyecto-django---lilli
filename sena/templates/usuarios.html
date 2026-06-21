@@ -18,20 +18,21 @@
 <!-- Search Bar & Filters -->
 <div class="card premium-card mb-5 p-4" style="background-color: white; border-radius: 20px;">
     <form method="GET" class="row g-3 align-items-center">
-        <div class="col-md-6 col-lg-8">
+        <div class="{% if rol_usuario == 'administrador' %}col-md-6 col-lg-8{% else %}col-md-10 col-lg-11{% endif %}">
             <div class="input-group">
                 <span class="input-group-text bg-light border-end-0 text-muted" style="border-radius: 12px 0 0 12px; border-color: rgba(226,232,240,0.8);"><i class="bi bi-search"></i></span>
                 <input type="text" name="q" value="{{ query|default:'' }}" class="form-control border-start-0 bg-light" placeholder="Buscar por nombre, documento o correo..." style="font-size: 0.95rem; border-radius: 0 12px 12px 0; border-color: rgba(226,232,240,0.8); padding: 0.7rem 1rem;">
             </div>
         </div>
+        {% if rol_usuario == 'administrador' %}
         <div class="col-md-4 col-lg-3">
             <select name="rol" class="form-select bg-light" style="font-size: 0.95rem; border-radius: 12px; border-color: rgba(226,232,240,0.8); padding: 0.7rem 1rem;">
                 <option value="">Todos los Roles</option>
                 <option value="aprendiz" {% if rol_filter == 'aprendiz' %}selected{% endif %}>Aprendiz</option>
-                <option value="instructor" {% if rol_filter == 'instructor' %}selected{% endif %}>Instructor</option>
-                <option value="coordinador" {% if rol_filter == 'coordinador' %}selected{% endif %}>Coordinador</option>
+                <option value="administrador" {% if rol_filter == 'administrador' %}selected{% endif %}>Administrador</option>
             </select>
         </div>
+        {% endif %}
         <div class="col-md-2 col-lg-1">
             <button type="submit" class="btn btn-success w-100 border-0 py-2.5" style="background: linear-gradient(135deg, var(--sena-primary) 0%, var(--sena-dark) 100%); border-radius: 12px; font-weight: 600; box-shadow: 0 4px 12px rgba(57,181,74,0.2) !important;">
                 Filtrar
@@ -51,7 +52,10 @@
                     <th class="py-3.5" style="font-weight: 600;">Email</th>
                     <th class="py-3.5" style="font-weight: 600;">Rol</th>
                     <th class="py-3.5" style="font-weight: 600;">Ficha</th>
-                    <th class="py-3.5 pe-4 text-end" style="font-weight: 600;">Registro</th>
+                    <th class="py-3.5" style="font-weight: 600;">Registro</th>
+                    {% if rol_usuario == 'administrador' %}
+                    <th class="py-3.5 pe-4 text-end" style="font-weight: 600;">Acciones</th>
+                    {% endif %}
                 </tr>
             </thead>
             <tbody>
@@ -61,7 +65,7 @@
                         <div class="d-flex align-items-center gap-3">
                             <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold text-white shadow-sm" 
                                  style="width: 38px; height: 38px; font-size: 0.9rem;
-                                 background: {% if perfil.rol == 'coordinador' %}linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%){% elif perfil.rol == 'instructor' %}linear-gradient(135deg, #10b981 0%, #047857 100%){% else %}linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%){% endif %};">
+                                 background: {% if perfil.rol == 'administrador' %}linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%){% else %}linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%){% endif %};">
                                 {{ perfil.user.first_name|slice:":1" }}{{ perfil.user.last_name|slice:":1" }}
                             </div>
                             <div>
@@ -76,13 +80,9 @@
                     </td>
                     <td class="py-3.5 text-secondary">{{ perfil.user.email }}</td>
                     <td class="py-3.5">
-                        {% if perfil.rol == 'coordinador' %}
+                        {% if perfil.rol == 'administrador' %}
                             <span class="badge rounded-pill bg-violet-subtle text-violet border border-violet-subtle px-3 py-1.5" style="color: #6d28d9; background-color: #f5f3ff; border-color: #ddd6fe !important; font-weight: 600; font-size: 0.72rem;">
-                                <i class="bi bi-shield-fill-check me-1"></i> Coordinador
-                            </span>
-                        {% elif perfil.rol == 'instructor' %}
-                            <span class="badge rounded-pill bg-emerald-subtle text-emerald border border-emerald-subtle px-3 py-1.5" style="color: #047857; background-color: #ecfdf5; border-color: #a7f3d0 !important; font-weight: 600; font-size: 0.72rem;">
-                                <i class="bi bi-mortarboard-fill me-1"></i> Instructor
+                                <i class="bi bi-shield-fill-check me-1"></i> Administrador
                             </span>
                         {% else %}
                             <span class="badge rounded-pill bg-blue-subtle text-blue border border-blue-subtle px-3 py-1.5" style="color: #1d4ed8; background-color: #eff6ff; border-color: #bfdbfe !important; font-weight: 600; font-size: 0.72rem;">
@@ -97,13 +97,29 @@
                             <span class="text-black-50">—</span>
                         {% endif %}
                     </td>
-                    <td class="py-3.5 pe-4 text-end text-secondary small">
+                    <td class="py-3.5 text-secondary small">
                         {{ perfil.fecha_registro|date:"d M Y, h:i A" }}
                     </td>
+                    {% if rol_usuario == 'administrador' %}
+                    <td class="py-3.5 pe-4 text-end">
+                        <button class="btn btn-outline-success btn-sm me-1.5" style="border-radius: 8px; font-weight: 600; border-width: 1.5px; font-size: 0.82rem;"
+                                onclick="openEditUsuarioModal('{{ perfil.id }}', '{{ perfil.user.first_name }}', '{{ perfil.user.last_name }}', '{{ perfil.user.email }}', '{{ perfil.rol }}', '{{ perfil.numero_ficha|default:'' }}')">
+                            <i class="bi bi-pencil-fill me-1"></i> Editar
+                        </button>
+                        {% if perfil.user != request.user %}
+                        <form method="POST" action="{% url 'eliminar_usuario' perfil.id %}" class="d-inline" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este usuario? Esta acción no se puede deshacer.');">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline-danger btn-sm" style="border-radius: 8px; font-weight: 600; border-width: 1.5px; font-size: 0.82rem;">
+                                <i class="bi bi-trash-fill"></i> Eliminar
+                            </button>
+                        </form>
+                        {% endif %}
+                    </td>
+                    {% endif %}
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="6" class="text-center py-5 text-muted">
+                    <td colspan="{% if rol_usuario == 'administrador' %}7{% else %}6{% endif %}" class="text-center py-5 text-muted">
                         <div class="mb-3"><i class="bi bi-people fs-1 text-black-50"></i></div>
                         <h6 class="fw-bold text-dark">No se encontraron usuarios</h6>
                         <p class="small mb-0 text-secondary">Prueba ajustando los filtros de búsqueda o el texto ingresado.</p>
@@ -114,4 +130,85 @@
         </table>
     </div>
 </div>
+
+{% if rol_usuario == 'administrador' %}
+<!-- MODAL: Editar Usuario -->
+<div class="modal fade" id="modalEditarUsuario" tabindex="-1" aria-labelledby="modalEditarUsuarioLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+            <div class="modal-header border-bottom-0 pb-0 ps-4 pt-4">
+                <h5 class="modal-title fw-bold text-dark fs-4" id="modalEditarUsuarioLabel">Editar Usuario</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="formEditarUsuario" method="POST">
+                {% csrf_token %}
+                <div class="modal-body px-4 py-3">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold text-muted-custom small">Nombres</label>
+                        <input type="text" id="editNombres" name="primer_nombre" class="form-control" required style="border-radius: 10px;">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold text-muted-custom small">Apellidos</label>
+                        <input type="text" id="editApellidos" name="primer_apellido" class="form-control" required style="border-radius: 10px;">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold text-muted-custom small">Correo Electrónico</label>
+                        <input type="email" id="editEmail" name="email" class="form-control" required style="border-radius: 10px;">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold text-muted-custom small">Rol</label>
+                        <select id="editRol" name="rol" class="form-select" required style="border-radius: 10px;" onchange="toggleFichaEditField()">
+                            <option value="aprendiz">Aprendiz</option>
+                            <option value="administrador">Administrador</option>
+                        </select>
+                    </div>
+                    <div class="mb-3" id="editFichaContainer">
+                        <label class="form-label fw-semibold text-muted-custom small">Número de Ficha</label>
+                        <input type="text" id="editFicha" name="numero_ficha" class="form-control" style="border-radius: 10px;">
+                    </div>
+                </div>
+                <div class="modal-footer border-top-0 px-4 pb-4 pt-0 d-flex gap-2">
+                    <button type="button" class="btn btn-light w-50 py-2.5" data-bs-dismiss="modal" style="border-radius: 10px;">Cancelar</button>
+                    <button type="submit" class="btn btn-success w-50 py-2.5 border-0" style="background-color: var(--sena-primary); border-radius: 10px; font-weight: 600;">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block extra_js %}
+{% if rol_usuario == 'administrador' %}
+<script>
+    function openEditUsuarioModal(id, nombres, apellidos, email, rol, ficha) {
+        document.getElementById('editNombres').value = nombres;
+        document.getElementById('editApellidos').value = apellidos;
+        document.getElementById('editEmail').value = email;
+        document.getElementById('editRol').value = rol;
+        document.getElementById('editFicha').value = ficha;
+        
+        document.getElementById('formEditarUsuario').action = `/dashboard/usuarios/editar/${id}/`;
+        
+        toggleFichaEditField();
+        
+        const editModal = new bootstrap.Modal(document.getElementById('modalEditarUsuario'));
+        editModal.show();
+    }
+    
+    function toggleFichaEditField() {
+        const rolSelect = document.getElementById('editRol');
+        const fichaContainer = document.getElementById('editFichaContainer');
+        const fichaInput = document.getElementById('editFicha');
+        
+        if (rolSelect.value === 'aprendiz') {
+            fichaContainer.style.display = 'block';
+        } else {
+            fichaContainer.style.display = 'none';
+            fichaInput.value = '';
+        }
+    }
+</script>
+{% endif %}
 {% endblock %}

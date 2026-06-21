@@ -5,6 +5,16 @@ from django.contrib import messages
 from django.db.models import Q
 from .models import Perfil, MetaAhorro
 
+def obtener_rol_usuario(user):
+    if not user.is_authenticated:
+        return None
+    try:
+        return user.perfil.rol
+    except Exception:
+        if user.is_superuser or user.is_staff:
+            return 'administrador'
+        return 'aprendiz'
+
 def login_view(request):
     if request.method == 'POST':
         numero = request.POST.get('numero_documento')
@@ -72,18 +82,23 @@ def registro_view(request):
 def dashboard(request):
     if not request.user.is_authenticated:
         return redirect('login')
-    return render(request, 'dashboard.html', {'active_tab': 'novedades'})
+    rol_usuario = obtener_rol_usuario(request.user)
+    return render(request, 'dashboard.html', {'active_tab': 'novedades', 'rol_usuario': rol_usuario})
 
 
 def usuarios_view(request):
     if not request.user.is_authenticated:
         return redirect('login')
     
+    rol_usuario = obtener_rol_usuario(request.user)
     query = request.GET.get('q', '')
     rol_filter = request.GET.get('rol', '')
     
     perfiles = Perfil.objects.select_related('user').all().order_by('user__first_name')
     
+    if rol_usuario == 'aprendiz':
+        perfiles = perfiles.filter(rol='aprendiz')
+        
     if query:
         perfiles = perfiles.filter(
             Q(user__first_name__icontains=query) |
@@ -93,14 +108,15 @@ def usuarios_view(request):
             Q(numero_documento__icontains=query)
         )
         
-    if rol_filter:
+    if rol_filter and rol_usuario == 'administrador':
         perfiles = perfiles.filter(rol=rol_filter)
         
     context = {
         'perfiles': perfiles,
         'query': query,
         'rol_filter': rol_filter,
-        'active_tab': 'usuarios'
+        'active_tab': 'usuarios',
+        'rol_usuario': rol_usuario
     }
     return render(request, 'usuarios.html', context)
 
@@ -109,6 +125,7 @@ def metas_view(request):
     if not request.user.is_authenticated:
         return redirect('login')
         
+    rol_usuario = obtener_rol_usuario(request.user)
     metas = MetaAhorro.objects.filter(user=request.user).order_by('-fecha_creacion')
     
     total_objetivo = sum(meta.monto_objetivo for meta in metas)
@@ -124,7 +141,8 @@ def metas_view(request):
         'total_objetivo': total_objetivo,
         'total_ahorrado': total_ahorrado,
         'progreso_general': progreso_general,
-        'active_tab': 'metas'
+        'active_tab': 'metas',
+        'rol_usuario': rol_usuario
     }
     return render(request, 'metas.html', context)
 
@@ -209,6 +227,74 @@ def eliminar_meta(request, meta_id):
             messages.error(request, f'Error al eliminar la meta: {e}')
             
     return redirect('metas')
+
+
+def editar_usuario(request, perfil_id):
+    if not request.user.is_authenticated:
+        return redirect('login')
+        
+    rol_actual = obtener_rol_usuario(request.user)
+    if rol_actual != 'administrador':
+        messages.error(request, 'No tienes permisos para realizar esta acción.')
+        return redirect('dashboard')
+        
+    if request.method == 'POST':
+        try:
+            perfil = Perfil.objects.select_related('user').get(id=perfil_id)
+            user = perfil.user
+            
+            primer_nombre = request.POST.get('primer_nombre')
+            segundo_nombre = request.POST.get('segundo_nombre', '')
+            primer_apellido = request.POST.get('primer_apellido')
+            segundo_apellido = request.POST.get('segundo_apellido', '')
+            email = request.POST.get('email')
+            rol = request.POST.get('rol')
+            numero_ficha = request.POST.get('numero_ficha', '')
+            
+            user.first_name = f"{primer_nombre} {segundo_nombre}".strip()
+            user.last_name = f"{primer_apellido} {segundo_apellido}".strip()
+            user.email = email
+            user.save()
+            
+            perfil.rol = rol
+            perfil.numero_ficha = numero_ficha if numero_ficha and rol == 'aprendiz' else None
+            perfil.save()
+            
+            messages.success(request, f'Usuario "{user.get_full_name()}" actualizado correctamente.')
+        except Perfil.DoesNotExist:
+            messages.error(request, 'Usuario no encontrado.')
+        except Exception as e:
+            messages.error(request, f'Error al actualizar el usuario: {e}')
+            
+    return redirect('usuarios')
+
+
+def eliminar_usuario(request, perfil_id):
+    if not request.user.is_authenticated:
+        return redirect('login')
+        
+    rol_actual = obtener_rol_usuario(request.user)
+    if rol_actual != 'administrador':
+        messages.error(request, 'No tienes permisos para realizar esta acción.')
+        return redirect('dashboard')
+        
+    if request.method == 'POST':
+        try:
+            perfil = Perfil.objects.select_related('user').get(id=perfil_id)
+            user = perfil.user
+            nombre = user.get_full_name() or user.username
+            
+            if user == request.user:
+                messages.error(request, 'No puedes eliminar tu propio usuario.')
+            else:
+                user.delete()
+                messages.success(request, f'Usuario "{nombre}" eliminado correctamente.')
+        except Perfil.DoesNotExist:
+            messages.error(request, 'Usuario no encontrado.')
+        except Exception as e:
+            messages.error(request, f'Error al eliminar el usuario: {e}')
+            
+    return redirect('usuarios')
 
 
 def logout_view(request):

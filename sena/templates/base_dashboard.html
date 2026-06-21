@@ -326,7 +326,7 @@
                 <div class="user-avatar">
                     <i class="bi bi-person-fill"></i>
                 </div>
-                <span>{{ user.first_name|default:user.username }}</span>
+                <span>{{ user.first_name|default:user.username }} <small class="text-white-50 ms-1" style="font-size: 0.72rem;">({% if rol_usuario == 'administrador' %}Admin{% else %}Aprendiz{% endif %})</small></span>
             </div>
         </div>
     </div>
@@ -337,10 +337,12 @@
     <!-- SIDEBAR -->
     <aside class="sidebar">
         <nav class="d-flex flex-column gap-1">
+            {% if rol_usuario == 'administrador' %}
             <a href="{% url 'dashboard' %}" class="sidebar-menu-link {% if active_tab == 'novedades' %}active{% endif %}">
                 <i class="bi bi-grid-fill"></i>
                 <span>Novedades</span>
             </a>
+            {% endif %}
             <a href="{% url 'usuarios' %}" class="sidebar-menu-link {% if active_tab == 'usuarios' %}active{% endif %}">
                 <i class="bi bi-people-fill"></i>
                 <span>Usuarios</span>
@@ -349,11 +351,13 @@
                 <i class="bi bi-piggy-bank-fill"></i>
                 <span>Metas de Ahorro</span>
             </a>
+            {% if rol_usuario == 'administrador' %}
             <div class="sidebar-divider"></div>
             <a href="#" class="sidebar-menu-link {% if active_tab == 'ajustes' %}active{% endif %}">
                 <i class="bi bi-sliders"></i>
                 <span>Ajustes</span>
             </a>
+            {% endif %}
         </nav>
         
         <!-- Sidebar Footer con Boton de Cerrar Sesion -->
