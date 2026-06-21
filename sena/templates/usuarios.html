@@ -2,6 +2,81 @@
 
 {% block title %}Usuarios - SENA GDF{% endblock %}
 
+{% block extra_css %}
+<style>
+    /* Styling the search form and filters */
+    .premium-input-group {
+        border-radius: 14px;
+        overflow: hidden;
+        border: 1.5px solid rgba(226,232,240,0.8);
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        background-color: #f8fafc;
+    }
+    .premium-input-group:focus-within {
+        border-color: var(--sena-primary) !important;
+        box-shadow: 0 0 0 4px rgba(57, 181, 74, 0.15) !important;
+        background-color: white !important;
+    }
+    .premium-input-group input {
+        border: none !important;
+        background-color: transparent !important;
+    }
+    .premium-input-group input:focus {
+        box-shadow: none !important;
+    }
+    .premium-select {
+        border: 1.5px solid rgba(226,232,240,0.8);
+        border-radius: 14px;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        background-color: #f8fafc;
+    }
+    .premium-select:focus {
+        border-color: var(--sena-primary) !important;
+        box-shadow: 0 0 0 4px rgba(57, 181, 74, 0.15) !important;
+        background-color: white !important;
+    }
+    
+    /* Table styling */
+    .premium-table {
+        border-collapse: separate !important;
+        border-spacing: 0 10px !important;
+        margin-top: -10px;
+    }
+    .premium-table tbody tr {
+        background-color: white !important;
+        box-shadow: 0 5px 15px -5px rgba(15, 23, 42, 0.03), 0 4px 6px -4px rgba(15, 23, 42, 0.02);
+        transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .premium-table tbody tr:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 25px -10px rgba(15, 23, 42, 0.08), 0 0 0 1.5px rgba(57, 181, 74, 0.2);
+    }
+    .premium-table tbody td {
+        border: none !important;
+        padding-top: 1.1rem !important;
+        padding-bottom: 1.1rem !important;
+        background-color: white !important;
+    }
+    .premium-table tbody td:first-child {
+        border-top-left-radius: 14px !important;
+        border-bottom-left-radius: 14px !important;
+    }
+    .premium-table tbody td:last-child {
+        border-top-right-radius: 14px !important;
+        border-bottom-right-radius: 14px !important;
+    }
+    .premium-table thead th {
+        border: none !important;
+        padding-bottom: 12px !important;
+        color: var(--slate-600) !important;
+        font-weight: 600 !important;
+        text-transform: uppercase;
+        font-size: 0.78rem;
+        letter-spacing: 0.5px;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
     <div>
@@ -19,14 +94,14 @@
 <div class="card premium-card mb-5 p-4" style="background-color: white; border-radius: 20px;">
     <form method="GET" class="row g-3 align-items-center">
         <div class="{% if rol_usuario == 'administrador' %}col-md-6 col-lg-8{% else %}col-md-10 col-lg-11{% endif %}">
-            <div class="input-group">
-                <span class="input-group-text bg-light border-end-0 text-muted" style="border-radius: 12px 0 0 12px; border-color: rgba(226,232,240,0.8);"><i class="bi bi-search"></i></span>
-                <input type="text" name="q" value="{{ query|default:'' }}" class="form-control border-start-0 bg-light" placeholder="Buscar por nombre, documento o correo..." style="font-size: 0.95rem; border-radius: 0 12px 12px 0; border-color: rgba(226,232,240,0.8); padding: 0.7rem 1rem;">
+            <div class="input-group premium-input-group">
+                <span class="input-group-text bg-transparent border-0 text-muted"><i class="bi bi-search"></i></span>
+                <input type="text" name="q" value="{{ query|default:'' }}" class="form-control" placeholder="Buscar por nombre, documento o correo..." style="font-size: 0.95rem; padding: 0.7rem 1rem;">
             </div>
         </div>
         {% if rol_usuario == 'administrador' %}
         <div class="col-md-4 col-lg-3">
-            <select name="rol" class="form-select bg-light" style="font-size: 0.95rem; border-radius: 12px; border-color: rgba(226,232,240,0.8); padding: 0.7rem 1rem;">
+            <select name="rol" class="form-select premium-select" style="font-size: 0.95rem; padding: 0.7rem 1rem;">
                 <option value="">Todos los Roles</option>
                 <option value="aprendiz" {% if rol_filter == 'aprendiz' %}selected{% endif %}>Aprendiz</option>
                 <option value="administrador" {% if rol_filter == 'administrador' %}selected{% endif %}>Administrador</option>
@@ -42,10 +117,10 @@
 </div>
 
 <!-- User Table Card -->
-<div class="card premium-card overflow-hidden" style="border-radius: 20px;">
-    <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0" style="font-size: 0.92rem;">
-            <thead class="table-light text-secondary uppercase fs-7" style="border-bottom: 2px solid rgba(226,232,240,0.8);">
+<div class="card premium-card overflow-hidden" style="border-radius: 20px; border: none; background: transparent; box-shadow: none;">
+    <div class="table-responsive p-2" style="margin-top: -8px;">
+        <table class="table premium-table align-middle mb-0" style="font-size: 0.92rem;">
+            <thead class="text-secondary uppercase fs-7">
                 <tr>
                     <th class="ps-4 py-3.5" style="font-weight: 600;">Nombre Completo</th>
                     <th class="py-3.5" style="font-weight: 600;">Documento</th>
@@ -103,6 +178,8 @@
                     {% if rol_usuario == 'administrador' %}
                     <td class="py-3.5 pe-4 text-end">
                         <button class="btn btn-outline-success btn-sm me-1.5 edit-user-btn" style="border-radius: 8px; font-weight: 600; border-width: 1.5px; font-size: 0.82rem;"
+                                data-bs-toggle="modal"
+                                data-bs-target="#modalEditarUsuario"
                                 data-id="{{ perfil.id }}"
                                 data-tipo-documento="{{ perfil.tipo_documento }}"
                                 data-numero-documento="{{ perfil.numero_documento }}"
@@ -138,6 +215,9 @@
     </div>
 </div>
 
+{% endblock %}
+
+{% block modals %}
 {% if rol_usuario == 'administrador' %}
 <!-- MODAL: Editar Usuario -->
 <div class="modal fade" id="modalEditarUsuario" tabindex="-1" aria-labelledby="modalEditarUsuarioLabel" aria-hidden="true">
@@ -197,23 +277,24 @@
     </div>
 </div>
 {% endif %}
-
 {% endblock %}
 
 {% block extra_js %}
 {% if rol_usuario == 'administrador' %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        document.querySelectorAll('.edit-user-btn').forEach(button => {
-            button.addEventListener('click', function() {
-                const id = this.getAttribute('data-id');
-                const tipoDoc = this.getAttribute('data-tipo-documento');
-                const numDoc = this.getAttribute('data-numero-documento');
-                const firstName = this.getAttribute('data-first-name');
-                const lastName = this.getAttribute('data-last-name');
-                const email = this.getAttribute('data-email');
-                const rol = this.getAttribute('data-rol');
-                const ficha = this.getAttribute('data-ficha');
+        const modalEditarUsuario = document.getElementById('modalEditarUsuario');
+        if (modalEditarUsuario) {
+            modalEditarUsuario.addEventListener('show.bs.modal', function(event) {
+                const button = event.relatedTarget;
+                const id = button.getAttribute('data-id');
+                const tipoDoc = button.getAttribute('data-tipo-documento');
+                const numDoc = button.getAttribute('data-numero-documento');
+                const firstName = button.getAttribute('data-first-name');
+                const lastName = button.getAttribute('data-last-name');
+                const email = button.getAttribute('data-email');
+                const rol = button.getAttribute('data-rol');
+                const ficha = button.getAttribute('data-ficha');
                 
                 document.getElementById('editTipoDocumento').value = tipoDoc;
                 document.getElementById('editNumeroDocumento').value = numDoc;
@@ -226,11 +307,8 @@
                 document.getElementById('formEditarUsuario').action = `/dashboard/usuarios/editar/${id}/`;
                 
                 toggleFichaEditField();
-                
-                const editModal = new bootstrap.Modal(document.getElementById('modalEditarUsuario'));
-                editModal.show();
             });
-        });
+        }
     });
     
     function toggleFichaEditField() {

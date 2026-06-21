@@ -15,12 +15,13 @@
         display: flex;
         align-items: center;
         gap: 15px;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
     
     .stat-card:hover {
-        transform: translateY(-2px);
+        transform: translateY(-4px);
         box-shadow: var(--card-shadow-hover);
+        border-color: rgba(57, 181, 74, 0.15);
     }
     
     .stat-icon {
@@ -32,6 +33,11 @@
         justify-content: center;
         font-size: 1.4rem;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+        transition: all 0.3s ease;
+    }
+    
+    .stat-card:hover .stat-icon {
+        transform: scale(1.1) rotate(5deg);
     }
     
     .goal-card {
@@ -41,18 +47,17 @@
         box-shadow: var(--card-shadow);
         border: 1px solid rgba(226, 232, 240, 0.8);
         overflow: hidden;
-        transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
         position: relative;
     }
     
     .goal-card:hover {
-        transform: translateY(-6px);
-        box-shadow: var(--card-shadow-hover);
-        border-color: rgba(57, 181, 74, 0.25);
+        transform: translateY(-8px);
+        box-shadow: 0 20px 35px -10px rgba(15, 23, 42, 0.08), 0 0 0 1.5px rgba(57, 181, 74, 0.2);
     }
     
     .progress-custom {
-        height: 8px;
+        height: 10px;
         border-radius: 10px;
         background-color: var(--slate-100);
         overflow: hidden;
@@ -63,7 +68,8 @@
         height: 100%;
         border-radius: 10px;
         background: linear-gradient(90deg, var(--sena-primary) 0%, var(--sena-dark) 100%);
-        transition: width 0.85s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 0 8px rgba(57, 181, 74, 0.45);
+        transition: width 0.85s cubic-bezier(0.16, 1, 0.3, 1);
         position: relative;
     }
     
@@ -76,6 +82,7 @@
     .form-control:focus, .form-select:focus {
         border-color: var(--sena-primary) !important;
         box-shadow: 0 0 0 4px rgba(57, 181, 74, 0.15) !important;
+        background-color: white !important;
     }
 </style>
 {% endblock %}
@@ -161,8 +168,13 @@
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end border shadow-sm" style="border-radius: 12px;">
                         <li>
-                            <button class="dropdown-item d-flex align-items-center gap-2 py-2" style="font-size: 0.88rem;"
-                                    onclick="openEditModal('{{ meta.id }}', '{{ meta.nombre }}', '{{ meta.monto_objetivo }}', '{{ meta.fecha_limite|date:'Y-m-d' }}')">
+                            <button class="dropdown-item d-flex align-items-center gap-2 py-2 edit-meta-btn" style="font-size: 0.88rem;"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#modalEditarMeta"
+                                    data-id="{{ meta.id }}"
+                                    data-nombre="{{ meta.nombre }}"
+                                    data-monto-objetivo="{{ meta.monto_objetivo }}"
+                                    data-fecha-limite="{{ meta.fecha_limite|date:'Y-m-d' }}">
                                 <i class="bi bi-pencil text-secondary"></i> Editar Meta
                             </button>
                         </li>
@@ -205,9 +217,12 @@
                 
                 <!-- Quick Actions -->
                 <div>
-                    <button class="btn btn-outline-success btn-sm w-100 py-2.5 d-flex align-items-center justify-content-center gap-2" 
+                    <button class="btn btn-outline-success btn-sm w-100 py-2.5 d-flex align-items-center justify-content-center gap-2 abono-btn" 
                             style="border-radius: 12px; font-weight: 600; border-width: 1.5px; transition: all 0.2s ease;"
-                            onclick="openAbonoModal('{{ meta.id }}', '{{ meta.nombre }}', '{{ meta.monto_actual }}', '{{ meta.monto_objetivo }}')"
+                            data-bs-toggle="modal"
+                            data-bs-target="#modalAbonar"
+                            data-id="{{ meta.id }}"
+                            data-nombre="{{ meta.nombre }}"
                             onmouseover="this.style.background='var(--sena-primary)'; this.style.color='white'; this.style.borderColor='var(--sena-primary)';"
                             onmouseout="this.style.background='transparent'; this.style.color='var(--sena-primary)'; this.style.borderColor='var(--sena-primary)';">
                         <i class="bi bi-plus-circle-fill"></i> Registar Abono
@@ -230,6 +245,9 @@
     {% endfor %}
 </div>
 
+{% endblock %}
+
+{% block modals %}
 <!-- MODAL: Crear Meta -->
 <div class="modal fade" id="modalCrearMeta" tabindex="-1" aria-labelledby="modalCrearMetaLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -345,23 +363,36 @@
 
 {% block extra_js %}
 <script>
-    function openAbonoModal(id, nombre, actual, objetivo) {
-        document.getElementById('abonoMetaNombre').textContent = nombre;
-        document.getElementById('formAbonar').action = `/dashboard/metas/actualizar/${id}/`;
+    document.addEventListener('DOMContentLoaded', function() {
+        const modalEditarMeta = document.getElementById('modalEditarMeta');
+        if (modalEditarMeta) {
+            modalEditarMeta.addEventListener('show.bs.modal', function(event) {
+                const button = event.relatedTarget;
+                const id = button.getAttribute('data-id');
+                const nombre = button.getAttribute('data-nombre');
+                const objetivo = button.getAttribute('data-monto-objetivo');
+                const fecha = button.getAttribute('data-fecha-limite');
+                
+                document.getElementById('editNombre').value = nombre;
+                // Safe string parsing for floating numbers (in case of comma decimals)
+                document.getElementById('editMontoObjetivo').value = parseFloat(objetivo.replace(',', '.'));
+                document.getElementById('editFechaLimite').value = fecha;
+                
+                document.getElementById('formEditarMeta').action = `/dashboard/metas/editar/${id}/`;
+            });
+        }
         
-        const myModal = new bootstrap.Modal(document.getElementById('modalAbonar'));
-        myModal.show();
-    }
-    
-    function openEditModal(id, nombre, objetivo, fecha) {
-        document.getElementById('editNombre').value = nombre;
-        document.getElementById('editMontoObjetivo').value = parseFloat(objetivo.replace(',', '.'));
-        document.getElementById('editFechaLimite').value = fecha;
-        
-        document.getElementById('formEditarMeta').action = `/dashboard/metas/editar/${id}/`;
-        
-        const editModal = new bootstrap.Modal(document.getElementById('modalEditarMeta'));
-        editModal.show();
-    }
+        const modalAbonar = document.getElementById('modalAbonar');
+        if (modalAbonar) {
+            modalAbonar.addEventListener('show.bs.modal', function(event) {
+                const button = event.relatedTarget;
+                const id = button.getAttribute('data-id');
+                const nombre = button.getAttribute('data-nombre');
+                
+                document.getElementById('abonoMetaNombre').textContent = nombre;
+                document.getElementById('formAbonar').action = `/dashboard/metas/actualizar/${id}/`;
+            });
+        }
+    });
 </script>
 {% endblock %}
