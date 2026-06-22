@@ -53,7 +53,7 @@
     
     .goal-card:hover {
         transform: translateY(-8px);
-        box-shadow: 0 20px 35px -10px rgba(15, 23, 42, 0.08), 0 0 0 1.5px var(--sena-purple-glow);
+        box-shadow: none;
     }
     
     .progress-custom {
@@ -68,20 +68,20 @@
         height: 100%;
         border-radius: 10px;
         background: linear-gradient(90deg, var(--sena-primary) 0%, var(--sena-dark) 100%);
-        box-shadow: 0 0 8px var(--sena-purple-glow);
+        box-shadow: none;
         transition: width 0.85s cubic-bezier(0.16, 1, 0.3, 1);
         position: relative;
     }
     
     .goal-header {
-        background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+        background-color: #d946ef;
         border-bottom: 1px solid rgba(226, 232, 240, 0.5);
         padding: 1.5rem;
     }
     
     .form-control:focus, .form-select:focus {
         border-color: var(--sena-primary) !important;
-        box-shadow: 0 0 0 4px var(--sena-glow) !important;
+        box-shadow: none;
         background-color: white !important;
     }
 </style>
@@ -94,7 +94,7 @@
         <p class="text-secondary mb-0" style="font-size: 0.95rem;">Define tus objetivos financieros y monitorea tu progreso paso a paso.</p>
     </div>
     <button class="btn text-white border-0 px-4 py-2.5 d-flex align-items-center gap-2 shadow-sm" 
-            style="background: linear-gradient(135deg, var(--sena-primary) 0%, var(--sena-purple) 100%); border-radius: 12px; font-weight: 600; box-shadow: 0 4px 15px var(--sena-glow) !important; transition: all 0.25s ease;"
+            style="background: linear-gradient(135deg, var(--sena-primary) 0%, var(--sena-purple) 100%); border-radius: 12px; font-weight: 600; box-shadow: none; transition: all 0.25s ease;"
             data-bs-toggle="modal" data-bs-target="#modalCrearMeta"
             onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 6px 20px var(--sena-purple-glow)';"
             onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px var(--sena-glow)';">
@@ -120,7 +120,7 @@
     <!-- Stat 2: Total Ahorrado -->
     <div class="col-md-4">
         <div class="stat-card">
-            <div class="stat-icon" style="background-color: var(--sena-light); color: var(--sena-primary); box-shadow: 0 4px 10px rgba(255, 0, 255, 0.15);">
+            <div class="stat-icon" style="background-color: var(--sena-light); color: var(--sena-primary); box-shadow: 0 4px 10px rgba(217, 70, 239, 0.15);">
                 <i class="bi bi-wallet2"></i>
             </div>
             <div>
@@ -140,7 +140,7 @@
                 <div class="d-flex align-items-center gap-3">
                     <h4 class="fw-bold mb-0 text-dark" style="font-size: 1.35rem; letter-spacing: -0.3px;">{{ progreso_general }}%</h4>
                     <div class="progress-custom flex-grow-1" style="height: 6px;">
-                        <div class="progress-bar-custom" style="width: {{ progreso_general }}%; background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%);"></div>
+                        <div class="progress-bar-custom" style="width: {{ progreso_general }}%; background-color: #d946ef;"></div>
                     </div>
                 </div>
             </div>

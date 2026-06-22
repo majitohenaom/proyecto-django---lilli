@@ -16,12 +16,12 @@
 
     <style>
         :root {
-            --sena-primary: #ff00ff;
-            --sena-dark: #4B0082;
-            --sena-purple: #DDA0DD;
-            --sena-light: rgba(255, 0, 255, 0.1);
-            --sena-glow: rgba(255, 0, 255, 0.4);
-            --sena-purple-glow: rgba(221, 160, 221, 0.4);
+            --sena-primary: #d946ef;
+            --sena-dark: #c026d3;
+            --sena-purple: #d946ef;
+            --sena-light: rgba(217, 70, 239, 0.1);
+            --sena-glow: transparent;
+            --sena-purple-glow: transparent;
             --slate-50: #f8fafc;
             --slate-100: #f1f5f9;
             --slate-200: #e2e8f0;
@@ -35,8 +35,8 @@
             --sidebar-hover: #1a1a3a;
             --sidebar-active: #1a1a3a;
 
-            --card-shadow: 0 10px 25px -5px rgba(75, 0, 130, 0.1), 0 8px 16px -6px rgba(75, 0, 130, 0.05);
-            --card-shadow-hover: 0 0 20px var(--sena-glow), inset 0 0 10px var(--sena-purple-glow);
+            --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.06), 0 8px 16px -6px rgba(0, 0, 0, 0.03);
+            --card-shadow-hover: 0 12px 30px -10px rgba(0, 0, 0, 0.1), 0 8px 16px -8px rgba(0, 0, 0, 0.04);
         }
 
         /* Modern Slim Scrollbar */
@@ -72,10 +72,10 @@
         .navbar-custom {
             background-color: rgba(10, 10, 26, 0.96);
             backdrop-filter: blur(12px);
-            border-bottom: 3px solid #ff00ff;
-            border-top: 1px solid #DDA0DD;
+            border-bottom: 3px solid #d946ef;
+            border-top: 1px solid #d946ef;
             padding: 0.65rem 1.5rem;
-            box-shadow: 0 0 20px var(--sena-glow), 0 0 40px var(--sena-purple-glow);
+            box-shadow: none;
             position: sticky;
             top: 0;
             z-index: 1030;
@@ -85,15 +85,15 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            color: #ff00ff !important;
-            text-shadow: 0 0 5px #DDA0DD;
+            color: #d946ef !important;
+            text-shadow: none;
             font-weight: 700;
         }
 
         .brand-icon-wrapper {
             width: 40px;
             height: 40px;
-            background: linear-gradient(135deg, #ff00ff 0%, #DDA0DD 100%);
+            background-color: #d946ef;
             /* Magenta y Morado */
             border-radius: 12px;
             display: flex;
@@ -101,17 +101,17 @@
             justify-content: center;
             color: white;
             font-size: 1.35rem;
-            box-shadow: 0 0 15px var(--sena-glow);
+            box-shadow: none;
             transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .navbar-brand-custom:hover .brand-icon-wrapper {
             transform: scale(1.1) rotate(15deg);
-            box-shadow: 0 0 25px var(--sena-purple-glow);
+            box-shadow: none;
         }
 
         .user-profile-badge {
-            background: rgba(255, 0, 255, 0.1);
+            background: rgba(217, 70, 239, 0.1);
             color: white;
             border-radius: 14px;
             padding: 0.45rem 1.1rem;
@@ -120,7 +120,7 @@
             gap: 10px;
             font-weight: 500;
             font-size: 0.9rem;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
@@ -134,7 +134,7 @@
         .user-avatar {
             width: 26px;
             height: 26px;
-            background: linear-gradient(135deg, #ff00ff 0%, #DDA0DD 100%);
+            background-color: #d946ef;
             /* Magenta y Morado */
             color: white;
             border-radius: 50%;
@@ -186,12 +186,12 @@
         }
 
         .sidebar-menu-link.active {
-            background: linear-gradient(90deg, rgba(255, 0, 255, 0.1) 0%, transparent 100%);
+            background: linear-gradient(90deg, rgba(217, 70, 239, 0.1) 0%, transparent 100%);
             color: var(--sena-purple);
-            border-left-color: #ff00ff;
-            border-right-color: #DDA0DD;
+            border-left-color: #d946ef;
+            border-right-color: #d946ef;
             font-weight: 600;
-            text-shadow: 0 0 10px var(--sena-purple-glow);
+            text-shadow: none;
         }
 
         .sidebar-menu-link.active::after {
@@ -203,7 +203,7 @@
             width: 4px;
             background-color: var(--sena-purple);
             border-radius: 4px 0 0 4px;
-            box-shadow: 0 0 15px #ff00ff, 0 0 5px #DDA0DD;
+            box-shadow: none;
         }
 
         .sidebar-menu-link i {
@@ -214,7 +214,7 @@
         .sidebar-menu-link:hover i {
             transform: scale(1.15);
             color: var(--sena-primary);
-            filter: drop-shadow(0 0 10px #ff00ff) drop-shadow(0 0 5px #DDA0DD);
+            filter: none;
         }
 
         .sidebar-divider {
@@ -234,8 +234,8 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
-            background-color: rgba(255, 0, 255, 0.1);
-            color: #ff00ff;
+            background-color: rgba(217, 70, 239, 0.1);
+            color: #d946ef;
             border: 1px solid rgba(221, 160, 221, 0.4);
             padding: 0.75rem;
             border-radius: 12px;
@@ -245,10 +245,10 @@
         }
 
         .btn-logout-custom:hover {
-            background-color: #ff00ff;
+            background-color: #d946ef;
             color: white;
-            border-color: #DDA0DD;
-            box-shadow: 0 8px 20px rgba(255, 0, 255, 0.4), 0 0 10px rgba(221, 160, 221, 0.4);
+            border-color: #d946ef;
+            box-shadow: 0 8px 20px rgba(217, 70, 239, 0.4), 0 0 10px rgba(221, 160, 221, 0.4);
             transform: translateY(-2px);
         }
 
@@ -266,14 +266,14 @@
             border-radius: 20px;
             background-color: white;
             box-shadow: var(--card-shadow);
-            border: 2px solid rgba(255, 0, 255, 0.5);
+            border: 1px solid rgba(217, 70, 239, 0.3);
             transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
         }
 
         .premium-card:hover {
             transform: translateY(-4px);
             box-shadow: var(--card-shadow-hover);
-            border-color: #DDA0DD;
+            border-color: #d946ef;
             transform: translateY(-5px) scale(1.02);
         }
 
