@@ -1,22 +1,27 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SENA GDF - {% block title %}Panel de Control{% endblock %}</title>
     <!-- Google Fonts (Outfit) -->
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    
+
     <style>
         :root {
-            --sena-primary: #39b54a;
-            --sena-dark: #267a32;
-            --sena-light: #e8f9eb;
-            --sena-glow: rgba(57, 181, 74, 0.2);
+            --sena-primary: #ff00ff;
+            --sena-dark: #4B0082;
+            --sena-purple: #DDA0DD;
+            --sena-light: rgba(255, 0, 255, 0.1);
+            --sena-glow: rgba(255, 0, 255, 0.4);
+            --sena-purple-glow: rgba(221, 160, 221, 0.4);
             --slate-50: #f8fafc;
             --slate-100: #f1f5f9;
             --slate-200: #e2e8f0;
@@ -25,13 +30,13 @@
             --slate-700: #334155;
             --slate-800: #1e293b;
             --slate-900: #0f172a;
-            
-            --sidebar-bg: #0f172a;
-            --sidebar-hover: #1e293b;
-            --sidebar-active: #1e293b;
-            
-            --card-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.04), 0 8px 16px -6px rgba(15, 23, 42, 0.02);
-            --card-shadow-hover: 0 20px 35px -10px rgba(57, 181, 74, 0.1), 0 0 0 1px rgba(57, 181, 74, 0.15);
+
+            --sidebar-bg: #0a0a1a;
+            --sidebar-hover: #1a1a3a;
+            --sidebar-active: #1a1a3a;
+
+            --card-shadow: 0 10px 25px -5px rgba(75, 0, 130, 0.1), 0 8px 16px -6px rgba(75, 0, 130, 0.05);
+            --card-shadow-hover: 0 0 20px var(--sena-glow), inset 0 0 10px var(--sena-purple-glow);
         }
 
         /* Modern Slim Scrollbar */
@@ -39,13 +44,16 @@
             width: 8px;
             height: 8px;
         }
+
         ::-webkit-scrollbar-track {
             background: var(--slate-50);
         }
+
         ::-webkit-scrollbar-thumb {
             background: var(--slate-300);
             border-radius: 8px;
         }
+
         ::-webkit-scrollbar-thumb:hover {
             background: var(--slate-400);
         }
@@ -59,48 +67,51 @@
             color: var(--slate-900);
             -webkit-font-smoothing: antialiased;
         }
-        
+
         /* HEADER NAVBAR */
         .navbar-custom {
-            background-color: rgba(15, 23, 42, 0.96);
+            background-color: rgba(10, 10, 26, 0.96);
             backdrop-filter: blur(12px);
-            border-bottom: 2px solid var(--sena-primary);
+            border-bottom: 3px solid #ff00ff;
+            border-top: 1px solid #DDA0DD;
             padding: 0.65rem 1.5rem;
-            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 20px var(--sena-glow), 0 0 40px var(--sena-purple-glow);
             position: sticky;
             top: 0;
             z-index: 1030;
         }
-        
+
         .navbar-brand-custom {
             display: flex;
             align-items: center;
             gap: 12px;
-            color: white !important;
+            color: #ff00ff !important;
+            text-shadow: 0 0 5px #DDA0DD;
             font-weight: 700;
         }
-        
+
         .brand-icon-wrapper {
             width: 40px;
             height: 40px;
-            background: linear-gradient(135deg, var(--sena-primary) 0%, var(--sena-dark) 100%);
+            background: linear-gradient(135deg, #ff00ff 0%, #DDA0DD 100%);
+            /* Magenta y Morado */
             border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
             font-size: 1.35rem;
-            box-shadow: 0 4px 15px rgba(57, 181, 74, 0.4);
+            box-shadow: 0 0 15px var(--sena-glow);
             transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .navbar-brand-custom:hover .brand-icon-wrapper {
             transform: scale(1.1) rotate(15deg);
-            box-shadow: 0 6px 20px rgba(57, 181, 74, 0.6);
+            box-shadow: 0 0 25px var(--sena-purple-glow);
         }
-        
+
         .user-profile-badge {
-            background: rgba(255, 255, 255, 0.06);
+            background: rgba(255, 0, 255, 0.1);
             color: white;
             border-radius: 14px;
             padding: 0.45rem 1.1rem;
@@ -114,16 +125,17 @@
         }
 
         .user-profile-badge:hover {
-            background: rgba(255, 255, 255, 0.12);
+            background: rgba(221, 160, 221, 0.2);
             border-color: rgba(255, 255, 255, 0.25);
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
-        
+
         .user-avatar {
             width: 26px;
             height: 26px;
-            background: linear-gradient(135deg, var(--sena-primary) 0%, var(--sena-dark) 100%);
+            background: linear-gradient(135deg, #ff00ff 0%, #DDA0DD 100%);
+            /* Magenta y Morado */
             color: white;
             border-radius: 50%;
             display: flex;
@@ -132,14 +144,14 @@
             font-size: 0.8rem;
             font-weight: 700;
         }
-        
+
         /* LAYOUT MAIN */
         .wrapper {
             display: flex;
             flex: 1;
             min-height: calc(100vh - 66px);
         }
-        
+
         /* SIDEBAR */
         .sidebar {
             width: 260px;
@@ -151,7 +163,7 @@
             border-right: 1px solid rgba(255, 255, 255, 0.05);
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        
+
         .sidebar-menu-link {
             display: flex;
             align-items: center;
@@ -162,23 +174,26 @@
             font-size: 0.95rem;
             font-weight: 500;
             border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
             transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
             position: relative;
         }
-        
+
         .sidebar-menu-link:hover {
             background-color: var(--sidebar-hover);
             color: white;
             padding-left: 1.7rem;
         }
-        
+
         .sidebar-menu-link.active {
-            background: linear-gradient(90deg, rgba(57, 181, 74, 0.08) 0%, rgba(57, 181, 74, 0.01) 100%);
-            color: var(--sena-primary);
-            border-left-color: var(--sena-primary);
+            background: linear-gradient(90deg, rgba(255, 0, 255, 0.1) 0%, transparent 100%);
+            color: var(--sena-purple);
+            border-left-color: #ff00ff;
+            border-right-color: #DDA0DD;
             font-weight: 600;
+            text-shadow: 0 0 10px var(--sena-purple-glow);
         }
-        
+
         .sidebar-menu-link.active::after {
             content: '';
             position: absolute;
@@ -186,9 +201,9 @@
             top: 15%;
             height: 70%;
             width: 4px;
-            background-color: var(--sena-primary);
+            background-color: var(--sena-purple);
             border-radius: 4px 0 0 4px;
-            filter: drop-shadow(0 0 6px var(--sena-primary));
+            box-shadow: 0 0 15px #ff00ff, 0 0 5px #DDA0DD;
         }
 
         .sidebar-menu-link i {
@@ -199,43 +214,44 @@
         .sidebar-menu-link:hover i {
             transform: scale(1.15);
             color: var(--sena-primary);
+            filter: drop-shadow(0 0 10px #ff00ff) drop-shadow(0 0 5px #DDA0DD);
         }
-        
+
         .sidebar-divider {
             height: 1px;
             background-color: rgba(255, 255, 255, 0.05);
             margin: 1.5rem;
         }
-        
+
         .sidebar-footer {
             margin-top: auto;
             padding: 0 1.5rem;
         }
-        
+
         .btn-logout-custom {
             width: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
-            background-color: rgba(239, 68, 68, 0.08);
-            color: #f87171;
-            border: 1px solid rgba(239, 68, 68, 0.2);
+            background-color: rgba(255, 0, 255, 0.1);
+            color: #ff00ff;
+            border: 1px solid rgba(221, 160, 221, 0.4);
             padding: 0.75rem;
             border-radius: 12px;
             font-weight: 600;
             font-size: 0.9rem;
             transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        
+
         .btn-logout-custom:hover {
-            background-color: #ef4444;
+            background-color: #ff00ff;
             color: white;
-            border-color: #ef4444;
-            box-shadow: 0 8px 20px rgba(239, 68, 68, 0.25);
+            border-color: #DDA0DD;
+            box-shadow: 0 8px 20px rgba(255, 0, 255, 0.4), 0 0 10px rgba(221, 160, 221, 0.4);
             transform: translateY(-2px);
         }
-        
+
         /* CONTENT AREA */
         .content-area {
             flex: 1;
@@ -243,47 +259,53 @@
             background-color: var(--slate-50);
             overflow-y: auto;
         }
-        
+
         /* PREMIUM CARDS */
         .premium-card {
             border: none;
             border-radius: 20px;
             background-color: white;
             box-shadow: var(--card-shadow);
-            border: 1px solid rgba(226, 232, 240, 0.8);
+            border: 2px solid rgba(255, 0, 255, 0.5);
             transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
         }
 
         .premium-card:hover {
             transform: translateY(-4px);
             box-shadow: var(--card-shadow-hover);
-            border-color: rgba(57, 181, 74, 0.25);
+            border-color: #DDA0DD;
+            transform: translateY(-5px) scale(1.02);
         }
-        
+
         /* RESPONSIVE */
         @media (max-width: 992px) {
             .content-area {
                 padding: 2rem;
             }
         }
-        
+
         @media (max-width: 768px) {
             .sidebar {
                 width: 75px;
             }
+
             .sidebar-menu-link span {
                 display: none;
             }
+
             .sidebar-menu-link {
                 justify-content: center;
                 padding: 1rem 0;
             }
+
             .sidebar-divider {
                 margin: 1rem 0.5rem;
             }
+
             .btn-logout-custom span {
                 display: none;
             }
+
             .btn-logout-custom {
                 padding: 0.7rem 0;
                 border-radius: 50%;
@@ -291,24 +313,40 @@
                 height: 44px;
                 margin: 0 auto;
             }
+
             .sidebar-footer {
                 padding: 0;
                 margin-bottom: 1rem;
             }
+
             .content-area {
                 padding: 1.5rem;
             }
         }
-        
+
         /* ANIMATIONS */
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(12px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-        
+
         @keyframes slideInRight {
-            from { opacity: 0; transform: translateX(20px); }
-            to { opacity: 1; transform: translateX(0); }
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
 
         .animated-fade-in {
@@ -317,98 +355,112 @@
     </style>
     {% block extra_css %}{% endblock %}
 </head>
+
 <body>
 
-<!-- HEADER NAVBAR -->
-<nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
-    <div class="container-fluid">
-        <a class="navbar-brand navbar-brand-custom" href="{% url 'dashboard' %}">
-            <div class="brand-icon-wrapper">
-                <i class="bi bi-wallet2"></i>
-            </div>
-            <div>
-                <span class="d-block lh-1 fw-bold fs-5">SENA GDF</span>
-                <span class="text-white-50 small" style="font-size: 0.7rem; font-weight: 400; letter-spacing: 0.5px;">GESTIÓN DE FINANZAS</span>
-            </div>
-        </a>
-        
-        <!-- Toggle button for mobile -->
-        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        
-        <!-- Navbar Right User Info -->
-        <div class="collapse navbar-collapse justify-content-end mt-2 mt-lg-0" id="navbarContent">
-            <div class="user-profile-badge">
-                <div class="user-avatar">
-                    <i class="bi bi-person-fill"></i>
+    <!-- HEADER NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
+        <div class="container-fluid">
+            <a class="navbar-brand navbar-brand-custom" href="{% url 'dashboard' %}">
+                <div class="brand-icon-wrapper">
+                    <i class="bi bi-wallet2"></i>
                 </div>
-                <span>{{ user.first_name|default:user.username }} <small class="text-white-50 ms-1" style="font-size: 0.72rem;">({% if rol_usuario == 'administrador' %}Admin{% else %}Aprendiz{% endif %})</small></span>
+                <div>
+                    <span class="d-block lh-1 fw-bold fs-5">SENA GDF</span>
+                    <span class="text-white-50 small"
+                        style="font-size: 0.7rem; font-weight: 400; letter-spacing: 0.5px;">GESTIÓN DE FINANZAS</span>
+                </div>
+            </a>
+
+            <!-- Toggle button for mobile -->
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Navbar Right User Info -->
+            <div class="collapse navbar-collapse justify-content-end mt-2 mt-lg-0" id="navbarContent">
+                <div class="user-profile-badge">
+                    <div class="user-avatar">
+                        <i class="bi bi-person-fill"></i>
+                    </div>
+                    <span>{{ user.first_name|default:user.username }} <small class="text-white-50 ms-1"
+                            style="font-size: 0.72rem;">({% if rol_usuario == 'administrador' %}Admin{% else
+                            %}Aprendiz{% endif %})</small></span>
+                </div>
             </div>
         </div>
-    </div>
-</nav>
+    </nav>
 
-<!-- MAIN WRAPPER -->
-<div class="wrapper">
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
-        <nav class="d-flex flex-column gap-1">
-            {% if rol_usuario == 'administrador' %}
-            <a href="{% url 'dashboard' %}" class="sidebar-menu-link {% if active_tab == 'novedades' %}active{% endif %}">
-                <i class="bi bi-grid-fill"></i>
-                <span>Novedades</span>
-            </a>
-            {% endif %}
-            <a href="{% url 'usuarios' %}" class="sidebar-menu-link {% if active_tab == 'usuarios' %}active{% endif %}">
-                <i class="bi bi-people-fill"></i>
-                <span>Usuarios</span>
-            </a>
-            <a href="{% url 'metas' %}" class="sidebar-menu-link {% if active_tab == 'metas' %}active{% endif %}">
-                <i class="bi bi-piggy-bank-fill"></i>
-                <span>Metas de Ahorro</span>
-            </a>
-            <div class="sidebar-divider"></div>
-            <a href="{% url 'configuraciones' %}" class="sidebar-menu-link {% if active_tab == 'configuraciones' %}active{% endif %}">
-                <i class="bi bi-sliders"></i>
-                <span>Ajustes</span>
-            </a>
-        </nav>
-        
-        <!-- Sidebar Footer con Boton de Cerrar Sesion -->
-        <div class="sidebar-footer mt-auto">
-            <form method="POST" action="{% url 'logout' %}" style="margin: 0;">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-logout-custom">
-                    <i class="bi bi-box-arrow-left fs-5"></i>
-                    <span>Cerrar Sesión</span>
-                </button>
-            </form>
-        </div>
-    </aside>
-    
-    <!-- MAIN CONTENT AREA -->
-    <main class="content-area animated-fade-in">
-        <!-- Django messages -->
-        {% if messages %}
+    <!-- MAIN WRAPPER -->
+    <div class="wrapper">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <nav class="d-flex flex-column gap-1">
+                {% if rol_usuario == 'administrador' %}
+                <a href="{% url 'dashboard' %}"
+                    class="sidebar-menu-link {% if active_tab == 'novedades' %}active{% endif %}">
+                    <i class="bi bi-grid-fill"></i>
+                    <span>Novedades</span>
+                </a>
+                {% endif %}
+                <a href="{% url 'usuarios' %}"
+                    class="sidebar-menu-link {% if active_tab == 'usuarios' %}active{% endif %}">
+                    <i class="bi bi-people-fill"></i>
+                    <span>Usuarios</span>
+                </a>
+                <a href="{% url 'metas' %}" class="sidebar-menu-link {% if active_tab == 'metas' %}active{% endif %}">
+                    <i class="bi bi-piggy-bank-fill"></i>
+                    <span>Metas de Ahorro</span>
+                </a>
+                <div class="sidebar-divider"></div>
+                <a href="{% url 'configuraciones' %}"
+                    class="sidebar-menu-link {% if active_tab == 'configuraciones' %}active{% endif %}">
+                    <i class="bi bi-sliders"></i>
+                    <span>Ajustes</span>
+                </a>
+            </nav>
+
+            <!-- Sidebar Footer con Boton de Cerrar Sesion -->
+            <div class="sidebar-footer mt-auto">
+                <form method="POST" action="{% url 'logout' %}" style="margin: 0;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-logout-custom">
+                        <i class="bi bi-box-arrow-left fs-5"></i>
+                        <span>Cerrar Sesión</span>
+                    </button>
+                </form>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="content-area animated-fade-in">
+            <!-- Django messages -->
+            {% if messages %}
             {% for message in messages %}
-                <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show rounded-3 shadow-sm mb-4" role="alert">
-                    <i class="bi {% if message.tags == 'success' %}bi-check-circle-fill{% else %}bi-exclamation-triangle-fill{% endif %} me-2"></i>
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
+            <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show rounded-3 shadow-sm mb-4"
+                role="alert">
+                <i
+                    class="bi {% if message.tags == 'success' %}bi-check-circle-fill{% else %}bi-exclamation-triangle-fill{% endif %} me-2"></i>
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
             {% endfor %}
-        {% endif %}
+            {% endif %}
 
-        {% block content %}{% endblock %}
-    </main>
-</div>
+            {% block content %}{% endblock %}
+        </main>
+    </div>
 
-<!-- Modals outside stacking context -->
-{% block modals %}{% endblock %}
+    <!-- Modals outside stacking context -->
+    {% block modals %}{% endblock %}
 
-<!-- Bootstrap 5 Bundle JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-{% block extra_js %}{% endblock %}
+    <!-- Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+    {% block extra_js %}{% endblock %}
 </body>
+
 </html>

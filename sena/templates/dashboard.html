@@ -5,37 +5,49 @@
 {% block extra_css %}
 <style>
     .welcome-card-premium {
-        border: none;
+        border: 1px solid var(--sena-primary);
         border-radius: 24px;
-        background: linear-gradient(135deg, #e8f9eb 0%, #ffffff 50%, #f8fafc 100%);
-        box-shadow: 0 15px 35px -10px rgba(57, 181, 74, 0.12), 0 0 0 1px rgba(57, 181, 74, 0.08);
-        border-left: 6px solid var(--sena-primary);
+        background: linear-gradient(135deg, rgba(255,0,255,0.05) 0%, rgba(0,255,255,0.05) 50%, rgba(75,0,130,0.05) 100%);
+        box-shadow: 0 0 20px var(--sena-glow), inset 0 0 10px var(--sena-purple-glow);
         padding: 2.5rem;
         position: relative;
         overflow: hidden;
-        transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .welcome-card-premium:hover {
         transform: translateY(-2px);
+        box-shadow: 0 0 30px var(--sena-glow), inset 0 0 20px var(--sena-purple-glow);
+        border-color: var(--sena-purple);
+    }
+    .text-gradient {
+        background: linear-gradient(135deg, var(--sena-primary), var(--sena-purple));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-shadow: 0 0 15px rgba(255,0,255,0.3);
     }
     .module-icon-container {
         width: 50px;
         height: 50px;
         font-size: 1.4rem;
         transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        box-shadow: 0 0 15px var(--sena-glow);
+        border: 1px solid var(--sena-primary);
     }
     .premium-card:hover .module-icon-container {
         transform: scale(1.15) rotate(8deg);
+        box-shadow: 0 0 20px var(--sena-purple-glow);
+        border-color: var(--sena-purple);
     }
     .premium-btn {
         border-radius: 12px;
         font-weight: 600;
         border: none;
         transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        text-shadow: 0 0 5px rgba(255,255,255,0.5);
     }
     .premium-btn:hover {
         transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(57, 181, 74, 0.3);
+        box-shadow: 0 0 20px var(--sena-purple-glow);
     }
 </style>
 {% endblock %}
@@ -47,28 +59,28 @@
     </div>
     <div class="row align-items-center">
         <div class="col-lg-8">
-            <span class="badge mb-2 px-3 py-2 text-success uppercase fw-semibold bg-white border border-success-subtle" style="font-size: 0.75rem; border-radius: 8px;">Panel Activo</span>
-            <h2 class="fw-bold text-dark mb-2" style="letter-spacing: -0.5px;">¡Bienvenido a SENA GDF, {{ user.get_full_name|default:user.username }}!</h2>
+            <span class="badge mb-2 px-3 py-2 uppercase fw-semibold bg-white" style="font-size: 0.75rem; border-radius: 8px; color: var(--sena-primary); border: 1px solid var(--sena-primary); box-shadow: 0 0 10px var(--sena-glow);">Panel Activo</span>
+            <h2 class="fw-bold mb-2 text-gradient" style="letter-spacing: -0.5px;">¡Bienvenido a SENA GDF, {{ user.get_full_name|default:user.username }}!</h2>
             <p class="text-secondary mb-0" style="font-size: 0.95rem; line-height: 1.6;">Has iniciado sesión correctamente. Monitorea y administra de manera segura tus metas financieras, usuarios de formación y configuraciones generales del sistema desde tu panel personalizado.</p>
         </div>
     </div>
 </div>
 
-<h4 class="fw-bold mb-4 text-dark" style="letter-spacing: -0.3px;">Módulos de Gestión</h4>
+<h4 class="fw-bold mb-4 text-gradient" style="letter-spacing: -0.3px;">Módulos de Gestión</h4>
 
 <div class="row g-4 mb-4">
     <!-- Card Usuarios -->
     <div class="col-md-6 col-lg-4">
         <div class="card premium-card p-4 h-100 d-flex flex-column">
             <div class="d-flex align-items-center justify-content-between mb-4">
-                <div class="rounded-3 d-flex align-items-center justify-content-center module-icon-container" style="background-color: var(--sena-light); color: var(--sena-primary); box-shadow: 0 4px 12px rgba(57, 181, 74, 0.1);">
+                <div class="rounded-3 d-flex align-items-center justify-content-center module-icon-container" style="background-color: var(--sena-light); color: var(--sena-primary);">
                     <i class="bi bi-people-fill"></i>
                 </div>
-                <span class="badge rounded-pill bg-light text-success fw-semibold border border-success-subtle px-3 py-1.5" style="font-size: 0.7rem;">Módulo Activo</span>
+                <span class="badge rounded-pill bg-light fw-semibold px-3 py-1.5" style="font-size: 0.7rem; color: var(--sena-purple); border: 1px solid var(--sena-purple); box-shadow: 0 0 10px var(--sena-purple-glow);">Módulo Activo</span>
             </div>
             <h5 class="fw-bold mb-2 text-dark">Usuarios del Sistema</h5>
             <p class="text-secondary small mb-4 flex-grow-1" style="line-height: 1.5;">Visualiza y administra todos los usuarios registrados en SENA GDF, incluyendo aprendices, instructores y coordinadores con filtrado rápido.</p>
-            <a href="{% url 'usuarios' %}" class="btn premium-btn w-100 py-2.5 text-white d-flex align-items-center justify-content-center gap-2" style="background: linear-gradient(135deg, var(--sena-primary) 0%, var(--sena-dark) 100%); box-shadow: 0 4px 12px rgba(57,181,74,0.2);">
+            <a href="{% url 'usuarios' %}" class="btn premium-btn w-100 py-2.5 text-white d-flex align-items-center justify-content-center gap-2" style="background: linear-gradient(135deg, var(--sena-primary) 0%, var(--sena-purple) 100%); box-shadow: 0 0 15px var(--sena-glow);">
                 <span>Ver Usuarios</span>
                 <i class="bi bi-arrow-right"></i>
             </a>
@@ -79,14 +91,14 @@
     <div class="col-md-6 col-lg-4">
         <div class="card premium-card p-4 h-100 d-flex flex-column">
             <div class="d-flex align-items-center justify-content-between mb-4">
-                <div class="rounded-3 d-flex align-items-center justify-content-center module-icon-container" style="background-color: #fffbeb; color: #d97706; box-shadow: 0 4px 12px rgba(217, 119, 6, 0.1);">
+                <div class="rounded-3 d-flex align-items-center justify-content-center module-icon-container" style="background-color: rgba(75,0,130,0.1); color: var(--sena-dark);">
                     <i class="bi bi-piggy-bank-fill"></i>
                 </div>
-                <span class="badge rounded-pill bg-light text-warning fw-semibold border border-warning-subtle px-3 py-1.5" style="font-size: 0.7rem;">Módulo Activo</span>
+                <span class="badge rounded-pill bg-light fw-semibold px-3 py-1.5" style="font-size: 0.7rem; color: var(--sena-primary); border: 1px solid var(--sena-primary); box-shadow: 0 0 10px var(--sena-glow);">Módulo Activo</span>
             </div>
             <h5 class="fw-bold mb-2 text-dark">Metas de Ahorro</h5>
             <p class="text-secondary small mb-4 flex-grow-1" style="line-height: 1.5;">Establece objetivos de ahorro y realiza un seguimiento detallado de tus finanzas. Mira tu progreso y actualiza tus ahorros de forma rápida.</p>
-            <a href="{% url 'metas' %}" class="btn premium-btn w-100 py-2.5 text-white d-flex align-items-center justify-content-center gap-2" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); box-shadow: 0 4px 12px rgba(217, 119, 6, 0.2);">
+            <a href="{% url 'metas' %}" class="btn premium-btn w-100 py-2.5 text-white d-flex align-items-center justify-content-center gap-2" style="background: linear-gradient(135deg, var(--sena-dark) 0%, var(--sena-purple) 100%); box-shadow: 0 0 15px var(--sena-purple-glow);">
                 <span>Administrar Metas</span>
                 <i class="bi bi-arrow-right"></i>
             </a>
@@ -97,14 +109,14 @@
     <div class="col-md-6 col-lg-4">
         <div class="card premium-card p-4 h-100 d-flex flex-column">
             <div class="d-flex align-items-center justify-content-between mb-4">
-                <div class="rounded-3 d-flex align-items-center justify-content-center module-icon-container" style="background-color: var(--slate-100); color: var(--slate-600); box-shadow: 0 4px 12px rgba(71, 85, 105, 0.1);">
+                <div class="rounded-3 d-flex align-items-center justify-content-center module-icon-container" style="background-color: rgba(0,255,255,0.1); color: var(--sena-purple);">
                     <i class="bi bi-person-bounding-box"></i>
                 </div>
-                <span class="badge rounded-pill bg-light text-secondary fw-semibold border px-3 py-1.5" style="font-size: 0.7rem;">Configuración</span>
+                <span class="badge rounded-pill bg-light fw-semibold border px-3 py-1.5" style="font-size: 0.7rem; color: var(--sena-dark); border-color: var(--sena-dark) !important; box-shadow: 0 0 10px rgba(75,0,130,0.3);">Configuración</span>
             </div>
             <h5 class="fw-bold mb-2 text-dark">Mi Perfil</h5>
             <p class="text-secondary small mb-4 flex-grow-1" style="line-height: 1.5;">Configura los detalles de tu cuenta de usuario, cambia tu contraseña y actualiza la información del perfil del SENA.</p>
-            <a href="{% url 'configuraciones' %}" class="btn premium-btn w-100 py-2.5 text-white d-flex align-items-center justify-content-center gap-2" style="background: linear-gradient(135deg, #64748b 0%, #475569 100%); box-shadow: 0 4px 12px rgba(71, 85, 105, 0.2);">
+            <a href="{% url 'configuraciones' %}" class="btn premium-btn w-100 py-2.5 text-white d-flex align-items-center justify-content-center gap-2" style="background: linear-gradient(135deg, var(--sena-purple) 0%, var(--sena-primary) 100%); box-shadow: 0 0 15px var(--sena-glow);">
                 <span>Editar Perfil</span>
                 <i class="bi bi-arrow-right"></i>
             </a>

@@ -21,7 +21,7 @@
     .stat-card:hover {
         transform: translateY(-4px);
         box-shadow: var(--card-shadow-hover);
-        border-color: rgba(57, 181, 74, 0.15);
+        border-color: var(--sena-glow);
     }
     
     .stat-icon {
@@ -53,7 +53,7 @@
     
     .goal-card:hover {
         transform: translateY(-8px);
-        box-shadow: 0 20px 35px -10px rgba(15, 23, 42, 0.08), 0 0 0 1.5px rgba(57, 181, 74, 0.2);
+        box-shadow: 0 20px 35px -10px rgba(15, 23, 42, 0.08), 0 0 0 1.5px var(--sena-purple-glow);
     }
     
     .progress-custom {
@@ -68,7 +68,7 @@
         height: 100%;
         border-radius: 10px;
         background: linear-gradient(90deg, var(--sena-primary) 0%, var(--sena-dark) 100%);
-        box-shadow: 0 0 8px rgba(57, 181, 74, 0.45);
+        box-shadow: 0 0 8px var(--sena-purple-glow);
         transition: width 0.85s cubic-bezier(0.16, 1, 0.3, 1);
         position: relative;
     }
@@ -81,7 +81,7 @@
     
     .form-control:focus, .form-select:focus {
         border-color: var(--sena-primary) !important;
-        box-shadow: 0 0 0 4px rgba(57, 181, 74, 0.15) !important;
+        box-shadow: 0 0 0 4px var(--sena-glow) !important;
         background-color: white !important;
     }
 </style>
@@ -93,11 +93,11 @@
         <h2 class="fw-bold text-dark mb-1" style="letter-spacing: -0.5px;">Mis Metas de Ahorro</h2>
         <p class="text-secondary mb-0" style="font-size: 0.95rem;">Define tus objetivos financieros y monitorea tu progreso paso a paso.</p>
     </div>
-    <button class="btn btn-success border-0 px-4 py-2.5 d-flex align-items-center gap-2 shadow-sm" 
-            style="background: linear-gradient(135deg, var(--sena-primary) 0%, var(--sena-dark) 100%); border-radius: 12px; font-weight: 600; box-shadow: 0 4px 15px rgba(57, 181, 74, 0.25) !important; transition: all 0.25s ease;"
+    <button class="btn text-white border-0 px-4 py-2.5 d-flex align-items-center gap-2 shadow-sm" 
+            style="background: linear-gradient(135deg, var(--sena-primary) 0%, var(--sena-purple) 100%); border-radius: 12px; font-weight: 600; box-shadow: 0 4px 15px var(--sena-glow) !important; transition: all 0.25s ease;"
             data-bs-toggle="modal" data-bs-target="#modalCrearMeta"
-            onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 6px 20px rgba(57, 181, 74, 0.35)';"
-            onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(57, 181, 74, 0.25)';">
+            onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 6px 20px var(--sena-purple-glow)';"
+            onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px var(--sena-glow)';">
         <i class="bi bi-plus-lg"></i>
         <span>Nueva Meta</span>
     </button>
@@ -120,7 +120,7 @@
     <!-- Stat 2: Total Ahorrado -->
     <div class="col-md-4">
         <div class="stat-card">
-            <div class="stat-icon" style="background-color: var(--sena-light); color: var(--sena-primary); box-shadow: 0 4px 10px rgba(57, 181, 74, 0.15);">
+            <div class="stat-icon" style="background-color: var(--sena-light); color: var(--sena-primary); box-shadow: 0 4px 10px rgba(255, 0, 255, 0.15);">
                 <i class="bi bi-wallet2"></i>
             </div>
             <div>
@@ -196,7 +196,7 @@
                 <div class="d-flex justify-content-between align-items-baseline mb-3">
                     <div>
                         <span class="text-secondary small d-block uppercase" style="letter-spacing: 0.5px; font-size: 0.7rem;">Ahorrado</span>
-                        <span class="fs-4 fw-bold text-success" style="letter-spacing: -0.5px;">${{ meta.monto_actual|intcomma }}</span>
+                        <span class="fs-4 fw-bold" style="color: var(--sena-primary); letter-spacing: -0.5px;">${{ meta.monto_actual|intcomma }}</span>
                     </div>
                     <div class="text-end">
                         <span class="text-secondary small d-block uppercase" style="letter-spacing: 0.5px; font-size: 0.7rem;">Objetivo</span>
@@ -217,8 +217,8 @@
                 
                 <!-- Quick Actions -->
                 <div>
-                    <button class="btn btn-outline-success btn-sm w-100 py-2.5 d-flex align-items-center justify-content-center gap-2 abono-btn" 
-                            style="border-radius: 12px; font-weight: 600; border-width: 1.5px; transition: all 0.2s ease;"
+                    <button class="btn btn-sm w-100 py-2.5 d-flex align-items-center justify-content-center gap-2 abono-btn" 
+                            style="color: var(--sena-primary); border-color: var(--sena-primary); border-radius: 12px; font-weight: 600; border-width: 1.5px; transition: all 0.2s ease;"
                             data-bs-toggle="modal"
                             data-bs-target="#modalAbonar"
                             data-id="{{ meta.id }}"
@@ -236,8 +236,8 @@
         <div class="mb-3"><i class="bi bi-piggy-bank fs-1 text-black-50"></i></div>
         <h5 class="fw-bold text-dark">No tienes metas de ahorro todavía</h5>
         <p class="small mb-4 text-secondary">Empieza a planificar tu futuro financiero hoy mismo agregando tu primera meta de ahorro.</p>
-        <button class="btn btn-success border-0 px-4 py-2.5" 
-                style="background: linear-gradient(135deg, var(--sena-primary) 0%, var(--sena-dark) 100%); border-radius: 12px; font-weight: 600;"
+        <button class="btn text-white border-0 px-4 py-2.5" 
+                style="background: linear-gradient(135deg, var(--sena-primary) 0%, var(--sena-purple) 100%); border-radius: 12px; font-weight: 600;"
                 data-bs-toggle="modal" data-bs-target="#modalCrearMeta">
             <i class="bi bi-plus-lg me-1"></i> Crear mi Primera Meta
         </button>
@@ -288,7 +288,7 @@
                 </div>
                 <div class="modal-footer border-top-0 px-4 pb-4 pt-0 d-flex gap-2">
                     <button type="button" class="btn btn-light w-50 py-2.5" data-bs-dismiss="modal" style="border-radius: 10px; font-weight: 500;">Cancelar</button>
-                    <button type="submit" class="btn btn-success w-50 py-2.5 border-0" style="background-color: var(--sena-primary); border-radius: 10px; font-weight: 600;">Guardar Meta</button>
+                    <button type="submit" class="btn w-50 py-2.5 border-0 text-white" style="background-color: var(--sena-primary); border-radius: 10px; font-weight: 600;">Guardar Meta</button>
                 </div>
             </form>
         </div>
@@ -317,7 +317,7 @@
                 </div>
                 <div class="modal-footer border-top-0 px-4 pb-4 pt-0 d-flex gap-2">
                     <button type="button" class="btn btn-light w-50 py-2" data-bs-dismiss="modal" style="border-radius: 10px;">Cerrar</button>
-                    <button type="submit" class="btn btn-success w-50 py-2 border-0" style="background-color: var(--sena-primary); border-radius: 10px; font-weight: 600;">Confirmar</button>
+                    <button type="submit" class="btn w-50 py-2 border-0 text-white" style="background-color: var(--sena-primary); border-radius: 10px; font-weight: 600;">Confirmar</button>
                 </div>
             </form>
         </div>
@@ -353,7 +353,7 @@
                 </div>
                 <div class="modal-footer border-top-0 px-4 pb-4 pt-0 d-flex gap-2">
                     <button type="button" class="btn btn-light w-50 py-2.5" data-bs-dismiss="modal" style="border-radius: 10px;">Cancelar</button>
-                    <button type="submit" class="btn btn-success w-50 py-2.5 border-0" style="background-color: var(--sena-primary); border-radius: 10px; font-weight: 600;">Actualizar Meta</button>
+                    <button type="submit" class="btn w-50 py-2.5 border-0 text-white" style="background-color: var(--sena-primary); border-radius: 10px; font-weight: 600;">Actualizar Meta</button>
                 </div>
             </form>
         </div>
