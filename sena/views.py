@@ -22,8 +22,8 @@ def login_view(request):
         return redirect('dashboard')
         
     if request.method == 'POST':
-        numero = request.POST.get('numero_documento')
-        password = request.POST.get('password')
+        numero = request.POST.get('numero_documento', '')
+        password = request.POST.get('password', '')
 
         # Limit special characters
         if not re.match(r'^[a-zA-Z0-9]+$', numero):
@@ -54,10 +54,10 @@ def registro_view(request):
         segundo_nombre = request.POST.get('segundo_nombre', '')
         primer_apellido = request.POST.get('primer_apellido')
         segundo_apellido = request.POST.get('segundo_apellido', '')
-        tipo_documento = request.POST.get('tipo_documento')
-        numero = request.POST.get('numero_documento')
-        email = request.POST.get('email')
-        password = request.POST.get('password')
+        tipo_documento = request.POST.get('tipo_documento', '')
+        numero = request.POST.get('numero_documento', '')
+        email = request.POST.get('email', '')
+        password = request.POST.get('password', '')
         password2 = request.POST.get('password2')
         rol = request.POST.get('rol')
         numero_ficha = request.POST.get('numero_ficha', '')
