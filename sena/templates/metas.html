@@ -79,6 +79,18 @@
         padding: 1.5rem;
     }
     
+    .goal-header h5 {
+        color: #ffffff !important;
+    }
+    
+    .goal-header .text-muted {
+        color: rgba(255,255,255,0.65) !important;
+    }
+    
+    .goal-header strong.text-dark {
+        color: #ffffff !important;
+    }
+    
     .form-control:focus, .form-select:focus {
         border-color: var(--sena-primary) !important;
         box-shadow: none;
@@ -244,6 +256,61 @@
     </div>
     {% endfor %}
 </div>
+
+<!-- Paginación de Metas -->
+{% if metas.has_other_pages %}
+<div class="d-flex justify-content-between align-items-center mt-5 px-1">
+    <p class="text-secondary small mb-0">
+        Mostrando <strong>{{ metas.start_index }}–{{ metas.end_index }}</strong> de <strong>{{ paginator.count }}</strong> metas
+    </p>
+    <nav aria-label="Paginación de metas">
+        <ul class="pagination mb-0" style="gap: 4px;">
+            {% if metas.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page=1"
+                   style="border-radius: 10px; border: 1.5px solid #e2e8f0; color: var(--sena-primary); font-weight: 600;">
+                    <i class="bi bi-chevron-double-left"></i>
+                </a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ metas.previous_page_number }}"
+                   style="border-radius: 10px; border: 1.5px solid #e2e8f0; color: var(--sena-primary); font-weight: 600;">
+                    <i class="bi bi-chevron-left"></i>
+                </a>
+            </li>
+            {% endif %}
+
+            {% for num in paginator.page_range %}
+                {% if metas.number == num %}
+                <li class="page-item active">
+                    <span class="page-link" style="border-radius: 10px; background: var(--sena-primary); border-color: var(--sena-primary); font-weight: 700;">{{ num }}</span>
+                </li>
+                {% elif num > metas.number|add:'-3' and num < metas.number|add:'3' %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ num }}"
+                       style="border-radius: 10px; border: 1.5px solid #e2e8f0; color: var(--slate-700); font-weight: 500;">{{ num }}</a>
+                </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if metas.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ metas.next_page_number }}"
+                   style="border-radius: 10px; border: 1.5px solid #e2e8f0; color: var(--sena-primary); font-weight: 600;">
+                    <i class="bi bi-chevron-right"></i>
+                </a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ paginator.num_pages }}"
+                   style="border-radius: 10px; border: 1.5px solid #e2e8f0; color: var(--sena-primary); font-weight: 600;">
+                    <i class="bi bi-chevron-double-right"></i>
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>
+{% endif %}
 
 {% endblock %}
 

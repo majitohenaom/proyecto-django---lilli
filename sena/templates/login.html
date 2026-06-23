@@ -373,17 +373,6 @@
             <form method="POST" autocomplete="off" novalidate>
                 {% csrf_token %}
 
-                <!-- Tipo Documento -->
-                <div class="mb-3">
-                    <label for="id_tipo_doc" class="form-label">Tipo de Documento</label>
-                    <select id="id_tipo_doc" name="tipo_documento" class="form-select" required>
-                        <option value="">Selecciona tu tipo de documento</option>
-                        <option value="CC">Cédula de Ciudadanía</option>
-                        <option value="TI">Tarjeta de Identidad</option>
-                        <option value="CE">Cédula de Extranjería</option>
-                    </select>
-                </div>
-
                 <!-- Número Documento -->
                 <div class="mb-3">
                     <label for="id_num_doc" class="form-label">Número de Documento</label>
