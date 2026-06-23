@@ -4,281 +4,410 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SENA - Crear Cuenta</title>
-    <!-- Google Fonts (Outfit) -->
+    <meta name="description" content="SENA GDF - Crear Cuenta. Regístrate para acceder al sistema de gestión financiera.">
+    <title>SENA GDF - Crear Cuenta</title>
+
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
     <!-- Bootstrap 5 CSS (local) -->
     <link href="{% static 'sena/css/bootstrap.min.css' %}" rel="stylesheet">
-    <!-- Bootstrap Icons (local) -->
-    <link rel="stylesheet" href="{% static 'sena/css/bootstrap-icons.min.css' %}">
-    
+
+    <!-- Bootstrap Icons: @font-face con ruta local garantizada -->
     <style>
+        @font-face {
+            font-display: block;
+            font-family: "bootstrap-icons";
+            src: url("{% static 'sena/css/fonts/bootstrap-icons.woff2' %}") format("woff2"),
+                 url("{% static 'sena/css/fonts/bootstrap-icons.woff' %}") format("woff");
+        }
+    </style>
+    <link rel="stylesheet" href="{% static 'sena/css/bootstrap-icons.min.css' %}">
+
+    <style>
+        /* ── VARIABLES ── */
+        :root {
+            --sena-primary: #9d174d;
+            --sena-dark:    #7a1040;
+            --sena-mid:     #be185d;
+            --sena-light:   rgba(157,23,77,.1);
+            --sena-glow:    rgba(157,23,77,.25);
+            --bg-body:      #f0f2f8;
+            --text-dark:    #0f172a;
+            --text-muted:   #64748b;
+            --border-light: #e2e8f0;
+            --white:        #ffffff;
+            --transition:   0.28s cubic-bezier(0.16,1,0.3,1);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; }
+
         body {
             font-family: 'Outfit', sans-serif;
-            background-color: #ffffff;
+            background: var(--bg-body);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #0f172a;
+            color: var(--text-dark);
+            position: relative;
+            overflow-x: hidden;
+            padding: 2rem 1rem;
         }
-        
-        .register-card {
-            border: none;
-            border-radius: 24px;
-            overflow: hidden;
-            box-shadow: 0 20px 45px -15px rgba(15, 23, 42, 0.08), 0 4px 12px rgba(0, 0, 0, 0.02);
-            max-width: 1000px;
+
+        /* Background orbs */
+        body::before {
+            content: '';
+            position: fixed;
+            width: 600px; height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(157,23,77,.12) 0%, transparent 70%);
+            top: -150px; right: -100px;
+            pointer-events: none;
+            animation: driftA 20s ease-in-out infinite alternate;
+        }
+        body::after {
+            content: '';
+            position: fixed;
+            width: 450px; height: 450px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(131,24,67,.08) 0%, transparent 70%);
+            bottom: -80px; left: -80px;
+            pointer-events: none;
+            animation: driftB 25s ease-in-out infinite alternate;
+        }
+        @keyframes driftA { from { transform: translate(0,0); } to { transform: translate(-40px,50px); } }
+        @keyframes driftB { from { transform: translate(0,0); } to { transform: translate(50px,-40px); } }
+
+        /* ── CARD ── */
+        .register-wrapper {
+            position: relative;
+            z-index: 10;
             width: 100%;
-            background-color: #ffffff;
-            border: 1px solid rgba(226, 232, 240, 0.8);
+            max-width: 1020px;
         }
-        
+
+        .register-card {
+            border-radius: 28px;
+            overflow: hidden;
+            box-shadow:
+                0 25px 60px -10px rgba(15,23,42,.14),
+                0 8px 24px -4px rgba(15,23,42,.06),
+                0 0 0 1px rgba(255,255,255,.7);
+            display: flex;
+            background: var(--white);
+            animation: cardIn .55s cubic-bezier(.16,1,.3,1) both;
+        }
+        @keyframes cardIn {
+            from { opacity:0; transform: translateY(28px) scale(.97); }
+            to   { opacity:1; transform: translateY(0) scale(1); }
+        }
+
+        /* ── BRAND PANEL ── */
         .brand-panel {
-            background-color: #9d174d;
-            box-shadow: none;
+            flex: 0 0 36%;
+            background: linear-gradient(145deg, #9d174d 0%, #7a1040 50%, #5e0d32 100%);
             color: white;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 3rem;
+            padding: 3.5rem 2rem;
             text-align: center;
             position: relative;
             overflow: hidden;
         }
-        
-        .brand-panel::before {
-            content: '';
+        .brand-panel .deco-circle {
             position: absolute;
-            width: 200px;
-            height: 200px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.03);
-            top: -40px;
-            right: -40px;
+            background: rgba(255,255,255,.04);
         }
+        .brand-panel .deco-circle:nth-child(1) { width: 280px; height: 280px; top: -80px; right: -80px; }
+        .brand-panel .deco-circle:nth-child(2) { width: 180px; height: 180px; bottom: -50px; left: -50px; }
 
-        .brand-panel::after {
-            content: '';
-            position: absolute;
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.04);
-            bottom: -20px;
-            left: -20px;
-        }
-        
-        .brand-logo-container {
-            width: 80px;
-            height: 80px;
-            background-color: rgba(255, 255, 255, 0.12);
-            backdrop-filter: blur(12px);
-            border-radius: 20px;
+        .brand-panel-content { position: relative; z-index: 2; }
+
+        .brand-logo {
+            width: 84px; height: 84px;
+            background: rgba(255,255,255,.13);
+            border: 1.5px solid rgba(255,255,255,.25);
+            border-radius: 24px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 2.5rem;
-            margin-bottom: 1.8rem;
-            box-shadow: none;
-            border: 1px solid rgba(221, 160, 221, 0.4);
-            animation: none;
+            margin: 0 auto 1.75rem;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 8px 32px rgba(0,0,0,.15), inset 0 1px 0 rgba(255,255,255,.2);
+            transition: transform var(--transition);
         }
-        
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.04); }
-            100% { transform: scale(1); }
-        }
-        
-        .form-panel {
-            background-color: #ffffff;
-            padding: 3.5rem 3rem;
-        }
-        
-        .form-control, .form-select {
-            border-radius: 12px;
-            padding: 0.7rem 1.1rem;
-            border: 1px solid #e2e8f0;
-            font-size: 0.92rem;
-            transition: all 0.25s ease;
-            background-color: #f8fafc;
-        }
-        
-        .form-control:focus, .form-select:focus {
-            background-color: #ffffff;
-            box-shadow: none;
-            border-color: #9d174d;
-        }
-        
-        .btn-sena-primary {
-            box-shadow: 0 4px 6px -1px rgba(157, 23, 77, 0.2), 0 2px 4px -1px rgba(157, 23, 77, 0.1);
-            }
-        
-        .btn-sena-primary:hover {
-            box-shadow: 0 10px 15px -3px rgba(157, 23, 77, 0.25), 0 4px 6px -2px rgba(157, 23, 77, 0.15);
-            background-color: #9d174d;
-            color: white;
-        }
-        
-        .btn-sena-outline {
-            border: 2px solid white;
-            background: transparent;
-            color: white;
-            padding: 0.75rem 2.2rem;
-            border-radius: 12px;
-            font-weight: 600;
-            transition: all 0.25s ease;
-            text-decoration: none;
+        .brand-logo:hover { transform: scale(1.06) rotate(-4deg); }
+
+        .brand-panel h2 { font-size: 1.45rem; font-weight: 700; margin-bottom: .6rem; letter-spacing: -.3px; }
+        .brand-panel p  { font-size: .88rem; opacity: .82; font-weight: 300; line-height: 1.65; margin-bottom: 1.75rem; }
+
+        .btn-brand-outline {
             display: inline-block;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        }
-        
-        .btn-sena-outline:hover {
-            background: white;
-            color: #9d174d;
-            transform: translateY(-2px);
-            box-shadow: none;
-        }
-        
-        .text-sena {
-            color: #9d174d;
+            border: 2px solid rgba(255,255,255,.6);
+            color: white;
+            padding: .65rem 1.75rem;
+            border-radius: 50px;
             font-weight: 600;
-            text-shadow: none;
+            font-size: .88rem;
+            text-decoration: none;
+            transition: all var(--transition);
+            backdrop-filter: blur(4px);
+            background: rgba(255,255,255,.08);
         }
-        
-        .text-muted-custom {
-            color: #64748b;
+        .btn-brand-outline:hover {
+            background: white;
+            color: var(--sena-primary);
+            border-color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0,0,0,.18);
+        }
+
+        /* ── FORM PANEL ── */
+        .form-panel {
+            flex: 1;
+            padding: 3rem 2.75rem;
+            background: var(--white);
+            overflow-y: auto;
+        }
+
+        .form-title    { font-size: 1.65rem; font-weight: 800; letter-spacing: -.5px; color: var(--text-dark); margin-bottom: .3rem; }
+        .form-subtitle { color: var(--text-muted); font-size: .9rem; margin-bottom: 0; }
+
+        /* ── INPUTS ── */
+        .form-label {
+            font-weight: 600;
+            font-size: .8rem;
+            color: var(--text-muted);
+            margin-bottom: .4rem;
+            text-transform: uppercase;
+            letter-spacing: .4px;
+        }
+
+        .form-control, .form-select {
+            border-radius: 11px;
+            padding: .68rem 1rem;
+            border: 1.5px solid var(--border-light);
+            font-size: .9rem;
+            transition: all var(--transition);
+            background: #f8fafc;
+            color: var(--text-dark);
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: var(--sena-primary);
+            background: white;
+            box-shadow: 0 0 0 3.5px var(--sena-glow);
+            outline: none;
+        }
+
+        /* ── BUTTON ── */
+        .btn-sena-submit {
+            width: 100%;
+            padding: .85rem;
+            background: linear-gradient(135deg, var(--sena-mid) 0%, var(--sena-primary) 50%, var(--sena-dark) 100%);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: .97rem;
+            font-weight: 700;
+            letter-spacing: .4px;
+            cursor: pointer;
+            transition: all var(--transition);
+            box-shadow: 0 4px 18px var(--sena-glow);
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-sena-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 28px rgba(157,23,77,.38);
+        }
+        .btn-sena-submit:active { transform: translateY(0); }
+
+        /* ── SECTION DIVIDER ── */
+        .section-label {
+            font-size: .7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .6px;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border-light);
+            padding-bottom: .5rem;
+            margin: 1.25rem 0 1rem;
+        }
+
+        /* ── ALERTS ── */
+        .alert {
+            border-radius: 14px;
+            border: none;
+            font-size: .88rem;
+            font-weight: 500;
+        }
+        .alert-danger  { background: #fef2f2; color: #991b1b; border-left: 4px solid #ef4444; }
+        .alert-success { background: #f0fdf4; color: #166534; border-left: 4px solid #22c55e; }
+        .alert-warning { background: #fffbeb; color: #92400e; border-left: 4px solid #f59e0b; }
+
+        /* ── LINKS ── */
+        .link-sena { color: var(--sena-primary); font-weight: 600; text-decoration: none; }
+        .link-sena:hover { color: var(--sena-dark); text-decoration: underline; }
+
+        /* ── MOBILE ── */
+        @media (max-width: 991px) {
+            .brand-panel { display: none !important; }
+            .form-panel  { padding: 2.5rem 2rem; }
+            .register-card { border-radius: 20px; }
+        }
+        @media (max-width: 480px) {
+            .form-panel { padding: 2rem 1.5rem; }
         }
     </style>
 </head>
 <body>
 
-<div class="container py-5 d-flex justify-content-center">
-    <div class="card register-card">
-        <div class="row g-0">
-            <!-- Brand Panel -->
-            <div class="col-lg-4 brand-panel d-none d-lg-flex">
-                <div class="brand-logo-container">
-                    <i class="bi bi-gear-fill"></i>
+<div class="register-wrapper">
+    <div class="register-card">
+
+        <!-- ── BRAND PANEL ── -->
+        <div class="brand-panel d-none d-lg-flex">
+            <div class="deco-circle"></div>
+            <div class="deco-circle"></div>
+            <div class="brand-panel-content">
+                <div class="brand-logo">
+                    <i class="bi bi-wallet2"></i>
                 </div>
-                <h2 class="fw-bold mb-3 fs-3">¿Ya tienes una cuenta?</h2>
-                <p class="mb-4 opacity-90 fw-light">Si ya te registraste en el sistema de administración de ingresos, ingresa directamente desde aquí.</p>
-                <a href="{% url 'login' %}" class="btn-sena-outline">Iniciar Sesión</a>
-            </div>
-            
-            <!-- Form Panel -->
-            <div class="col-lg-8 form-panel">
-                <div class="mb-4">
-                    <h1 class="fw-bold fs-2 text-dark">Crea tu Cuenta</h1>
-                    <p class="text-muted-custom mb-0">Regístrate completando tus datos personales</p>
-                </div>
-                
-                <!-- Alerts / Django Messages -->
-                {% if messages %}
-                    {% for message in messages %}
-                        <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show rounded-3" role="alert">
-                            <i class="bi {% if message.tags == 'success' %}bi-check-circle-fill{% else %}bi-exclamation-triangle-fill{% endif %} me-2"></i>
-                            {{ message }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    {% endfor %}
-                {% endif %}
-                
-                <form method="POST" class="mt-3">
-                    {% csrf_token %}
-                    
-                    <!-- Nombres -->
-                    <div class="row g-3 mb-3">
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold text-muted-custom small">Primer Nombre</label>
-                            <input type="text" name="primer_nombre" class="form-control" placeholder="Escribe tu primer nombre" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold text-muted-custom small">Segundo Nombre (Opcional)</label>
-                            <input type="text" name="segundo_nombre" class="form-control" placeholder="Escribe tu segundo nombre">
-                        </div>
-                    </div>
-                    
-                    <!-- Apellidos -->
-                    <div class="row g-3 mb-3">
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold text-muted-custom small">Primer Apellido</label>
-                            <input type="text" name="primer_apellido" class="form-control" placeholder="Escribe tu primer apellido" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold text-muted-custom small">Segundo Apellido (Opcional)</label>
-                            <input type="text" name="segundo_apellido" class="form-control" placeholder="Escribe tu segundo apellido">
-                        </div>
-                    </div>
-                    
-                    <!-- Documentos -->
-                    <div class="row g-3 mb-3">
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold text-muted-custom small">Tipo de Documento</label>
-                            <select name="tipo_documento" class="form-select" required>
-                                <option value="">Selecciona tu tipo de documento</option>
-                                <option value="CC">Cédula de Ciudadanía</option>
-                                <option value="TI">Tarjeta de Identidad</option>
-                                <option value="CE">Cédula de Extranjería</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold text-muted-custom small">Número de Documento</label>
-                            <input type="text" name="numero_documento" class="form-control" placeholder="Número de documento (servirá como usuario)" required pattern="^[a-zA-Z0-9]+$" title="Solo se permiten letras y números.">
-                        </div>
-                    </div>
-                    
-                    <!-- Email y Contrasena -->
-                    <div class="row g-3 mb-3">
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold text-muted-custom small">Correo Electrónico</label>
-                            <input type="email" name="email" class="form-control" placeholder="nombre@correo.com" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold text-muted-custom small">Contraseña</label>
-                            <input type="password" name="password" class="form-control" placeholder="Crea tu contraseña" required pattern="^[a-zA-Z0-9!@#\$%\^&\*\-_]+$" title="Caracteres especiales limitados por seguridad.">
-                        </div>
-                    </div>
-                    
-                    <!-- Confirmar Contrasena y Rol -->
-                    <div class="row g-3 mb-3">
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold text-muted-custom small">Confirmar Contraseña</label>
-                            <input type="password" name="password2" class="form-control" placeholder="Repite tu contraseña" required pattern="^[a-zA-Z0-9!@#\$%\^&\*\-_]+$" title="Caracteres especiales limitados por seguridad.">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold text-muted-custom small">Rol en el SENA</label>
-                            <select name="rol" class="form-select" required>
-                                <option value="">Selecciona tu rol</option>
-                                <option value="aprendiz">Aprendiz</option>
-                                <option value="administrador">Administrador</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <!-- Ficha -->
-                    <div class="row g-3 mb-4">
-                        <div class="col-md-12">
-                            <label class="form-label fw-semibold text-muted-custom small">Número de Ficha (Solo Aprendices)</label>
-                            <input type="text" name="numero_ficha" class="form-control" placeholder="Escribe tu número de ficha de formación (si aplica)">
-                        </div>
-                    </div>
-                    
-                    <button type="submit" class="btn btn-sena-primary w-100 py-3 mb-3">REGISTRAR CUENTA</button>
-                    
-                    <!-- Footer Mobile Links -->
-                    <div class="text-center d-lg-none mt-4">
-                        <p class="text-muted-custom mb-0">¿Ya tienes cuenta? <a href="{% url 'login' %}" class="text-decoration-none fw-bold text-sena">Inicia Sesión aquí</a></p>
-                    </div>
-                </form>
+                <h2>¿Ya tienes una cuenta?</h2>
+                <p>Si ya estás registrado en el sistema SENA GDF, accede directamente desde aquí con tus credenciales.</p>
+                <a href="{% url 'login' %}" class="btn-brand-outline">
+                    <i class="bi bi-box-arrow-in-right me-2"></i>Iniciar Sesión
+                </a>
             </div>
         </div>
+
+        <!-- ── FORM PANEL ── -->
+        <div class="form-panel">
+            <div class="mb-4">
+                <h1 class="form-title">Crear Cuenta</h1>
+                <p class="form-subtitle">Completa tus datos para registrarte en SENA GDF</p>
+            </div>
+
+            <!-- Django Messages -->
+            {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show mb-3" role="alert">
+                    <i class="bi {% if message.tags == 'success' %}bi-check-circle-fill{% elif message.tags == 'error' %}bi-x-circle-fill{% else %}bi-exclamation-triangle-fill{% endif %} me-2"></i>
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+                </div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="POST" novalidate>
+                {% csrf_token %}
+
+                <!-- SECCIÓN: Nombres -->
+                <p class="section-label">Información Personal</p>
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Primer Nombre</label>
+                        <input type="text" name="primer_nombre" class="form-control" placeholder="Tu primer nombre" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Segundo Nombre <span style="font-size:.7rem;font-weight:400;">(Opcional)</span></label>
+                        <input type="text" name="segundo_nombre" class="form-control" placeholder="Tu segundo nombre">
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Primer Apellido</label>
+                        <input type="text" name="primer_apellido" class="form-control" placeholder="Tu primer apellido" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Segundo Apellido <span style="font-size:.7rem;font-weight:400;">(Opcional)</span></label>
+                        <input type="text" name="segundo_apellido" class="form-control" placeholder="Tu segundo apellido">
+                    </div>
+                </div>
+
+                <!-- SECCIÓN: Documento -->
+                <p class="section-label">Documento de Identidad</p>
+                <div class="row g-3 mb-3">
+                    <div class="col-md-5">
+                        <label class="form-label">Tipo de Documento</label>
+                        <select name="tipo_documento" class="form-select" required>
+                            <option value="">Selecciona</option>
+                            <option value="CC">Cédula de Ciudadanía</option>
+                            <option value="TI">Tarjeta de Identidad</option>
+                            <option value="CE">Cédula de Extranjería</option>
+                        </select>
+                    </div>
+                    <div class="col-md-7">
+                        <label class="form-label">Número de Documento</label>
+                        <input type="text" name="numero_documento" class="form-control" placeholder="Será tu usuario de acceso" required pattern="^[a-zA-Z0-9]+$" title="Solo letras y números.">
+                    </div>
+                </div>
+
+                <!-- SECCIÓN: Acceso -->
+                <p class="section-label">Credenciales de Acceso</p>
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Correo Electrónico</label>
+                        <input type="email" name="email" class="form-control" placeholder="nombre@correo.com" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Contraseña</label>
+                        <input type="password" name="password" class="form-control" placeholder="Crea una contraseña" required pattern="^[a-zA-Z0-9!@#\$%\^\&\*\-_]+$">
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Confirmar Contraseña</label>
+                        <input type="password" name="password2" class="form-control" placeholder="Repite tu contraseña" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Rol en el SENA</label>
+                        <select name="rol" class="form-select" required>
+                            <option value="">Selecciona tu rol</option>
+                            <option value="aprendiz">Aprendiz</option>
+                            <option value="administrador">Administrador</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label">Número de Ficha <span style="font-size:.7rem;font-weight:400;">(Solo Aprendices)</span></label>
+                    <input type="text" name="numero_ficha" class="form-control" placeholder="Número de ficha de formación (si aplica)">
+                </div>
+
+                <!-- Botón -->
+                <button id="regBtn" type="submit" class="btn-sena-submit mb-3">
+                    <i class="bi bi-person-check-fill me-2"></i>REGISTRAR CUENTA
+                </button>
+
+                <!-- Mobile link -->
+                <div class="text-center d-lg-none">
+                    <p class="mb-0" style="font-size:.88rem; color: var(--text-muted);">
+                        ¿Ya tienes cuenta?
+                        <a href="{% url 'login' %}" class="link-sena">Inicia Sesión aquí</a>
+                    </p>
+                </div>
+            </form>
+        </div>
+
     </div>
 </div>
 
-<!-- Bootstrap 5 Bundle JS (local) -->
+<!-- Bootstrap JS (local) -->
 <script src="{% static 'sena/js/bootstrap.bundle.min.js' %}"></script>
+<script>
+    document.querySelector('form').addEventListener('submit', () => {
+        const btn = document.getElementById('regBtn');
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Creando cuenta...';
+        btn.disabled  = true;
+    });
+</script>
 </body>
 </html>

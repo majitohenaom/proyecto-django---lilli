@@ -4,283 +4,448 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="SENA GDF - Sistema de Gestión de Finanzas. Inicia sesión para acceder a tu panel.">
     <title>SENA GDF - Iniciar Sesión</title>
-    <!-- Google Fonts (Outfit) -->
+
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
     <!-- Bootstrap 5 CSS (local) -->
     <link href="{% static 'sena/css/bootstrap.min.css' %}" rel="stylesheet">
-    <!-- Bootstrap Icons (local) -->
-    <link rel="stylesheet" href="{% static 'sena/css/bootstrap-icons.min.css' %}">
-    
+
+    <!-- Bootstrap Icons: @font-face con ruta local garantizada -->
     <style>
+        @font-face {
+            font-display: block;
+            font-family: "bootstrap-icons";
+            src: url("{% static 'sena/css/fonts/bootstrap-icons.woff2' %}") format("woff2"),
+                 url("{% static 'sena/css/fonts/bootstrap-icons.woff' %}") format("woff");
+        }
+    </style>
+    <link rel="stylesheet" href="{% static 'sena/css/bootstrap-icons.min.css' %}">
+
+    <style>
+        /* ── VARIABLES ── */
+        :root {
+            --sena-primary:  #9d174d;
+            --sena-dark:     #7a1040;
+            --sena-mid:      #be185d;
+            --sena-light:    rgba(157,23,77,.1);
+            --sena-glow:     rgba(157,23,77,.25);
+            --bg-body:       #f0f2f8;
+            --text-dark:     #0f172a;
+            --text-muted:    #64748b;
+            --border-light:  #e2e8f0;
+            --white:         #ffffff;
+            --transition:    0.28s cubic-bezier(0.16,1,0.3,1);
+        }
+
+        /* ── RESET & BASE ── */
+        *, *::before, *::after { box-sizing: border-box; }
+
         body {
             font-family: 'Outfit', sans-serif;
-            background-color: #ffffff;
+            background: var(--bg-body);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #0f172a;
-        }
-        
-        .login-card {
-            border: none;
-            border-radius: 24px;
+            color: var(--text-dark);
+            position: relative;
             overflow: hidden;
-            box-shadow: 0 20px 45px -15px rgba(15, 23, 42, 0.08), 0 4px 12px rgba(0, 0, 0, 0.02);
-            max-width: 900px;
-            width: 100%;
-            background-color: #ffffff;
-            border: 1px solid rgba(226, 232, 240, 0.8);
+            padding: 1rem;
         }
-        
+
+        /* Background animated orbs */
+        body::before {
+            content: '';
+            position: fixed;
+            width: 600px; height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(157,23,77,.12) 0%, transparent 70%);
+            top: -150px; right: -150px;
+            pointer-events: none;
+            animation: drift1 18s ease-in-out infinite alternate;
+        }
+        body::after {
+            content: '';
+            position: fixed;
+            width: 500px; height: 500px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(131,24,67,.08) 0%, transparent 70%);
+            bottom: -100px; left: -100px;
+            pointer-events: none;
+            animation: drift2 22s ease-in-out infinite alternate;
+        }
+
+        @keyframes drift1 {
+            from { transform: translate(0, 0) scale(1); }
+            to   { transform: translate(-40px, 40px) scale(1.1); }
+        }
+        @keyframes drift2 {
+            from { transform: translate(0, 0) scale(1); }
+            to   { transform: translate(40px, -30px) scale(1.08); }
+        }
+
+        /* ── CARD ── */
+        .login-wrapper {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 920px;
+        }
+
+        .login-card {
+            border-radius: 28px;
+            overflow: hidden;
+            box-shadow:
+                0 25px 60px -10px rgba(15,23,42,.14),
+                0 8px 24px -4px rgba(15,23,42,.06),
+                0 0 0 1px rgba(255,255,255,.7);
+            display: flex;
+            background: var(--white);
+            animation: cardEntrance .55s cubic-bezier(.16,1,.3,1) both;
+        }
+
+        @keyframes cardEntrance {
+            from { opacity: 0; transform: translateY(24px) scale(.97); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* ── BRAND PANEL ── */
         .brand-panel {
-            background-color: #9d174d;
-            box-shadow: none;
+            flex: 0 0 42%;
+            background: linear-gradient(145deg, #9d174d 0%, #7a1040 50%, #5e0d32 100%);
             color: white;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 3rem;
+            padding: 3.5rem 2.5rem;
             text-align: center;
             position: relative;
             overflow: hidden;
         }
-        
-        .brand-panel::before {
-            content: '';
-            position: absolute;
-            width: 250px;
-            height: 250px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.03);
-            top: -50px;
-            right: -50px;
-        }
 
-        .brand-panel::after {
-            content: '';
+        /* Decorative circles */
+        .brand-panel .deco-circle {
             position: absolute;
-            width: 150px;
-            height: 150px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.04);
-            bottom: -30px;
-            left: -30px;
+            background: rgba(255,255,255,.04);
         }
+        .brand-panel .deco-circle:nth-child(1) { width: 280px; height: 280px; top: -80px; right: -80px; }
+        .brand-panel .deco-circle:nth-child(2) { width: 180px; height: 180px; bottom: -50px; left: -50px; }
+        .brand-panel .deco-circle:nth-child(3) { width: 120px; height: 120px; top: 50%; left: 20px; transform: translateY(-50%); background: rgba(255,255,255,.03); }
 
-        .brand-logo-container {
-            width: 90px;
-            height: 90px;
-            background-color: rgba(255, 255, 255, 0.12);
-            backdrop-filter: blur(12px);
-            border-radius: 22px;
+        .brand-panel-content { position: relative; z-index: 2; }
+
+        .brand-logo {
+            width: 88px; height: 88px;
+            background: rgba(255,255,255,.13);
+            border: 1.5px solid rgba(255,255,255,.25);
+            border-radius: 24px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2.8rem;
-            margin-bottom: 1.8rem;
-            box-shadow: none;
-            border: 1px solid rgba(221, 160, 221, 0.4);
-            animation: none;
+            font-size: 2.6rem;
+            margin: 0 auto 2rem;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 8px 32px rgba(0,0,0,.15), inset 0 1px 0 rgba(255,255,255,.2);
+            transition: transform var(--transition);
+        }
+        .brand-logo:hover { transform: scale(1.06) rotate(-4deg); }
+
+        .brand-panel h2 {
+            font-size: 1.55rem;
+            font-weight: 700;
+            margin-bottom: .75rem;
+            line-height: 1.25;
+            letter-spacing: -.3px;
         }
 
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.04); }
-            100% { transform: scale(1); }
+        .brand-panel p {
+            font-size: .9rem;
+            opacity: .82;
+            font-weight: 300;
+            line-height: 1.65;
+            margin-bottom: 2rem;
         }
-        
+
+        .btn-brand-outline {
+            display: inline-block;
+            border: 2px solid rgba(255,255,255,.6);
+            color: white;
+            padding: .7rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: .9rem;
+            text-decoration: none;
+            transition: all var(--transition);
+            backdrop-filter: blur(4px);
+            background: rgba(255,255,255,.08);
+        }
+        .btn-brand-outline:hover {
+            background: white;
+            color: var(--sena-primary);
+            border-color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0,0,0,.18);
+        }
+
+        /* ── FORM PANEL ── */
         .form-panel {
-            background-color: #ffffff;
+            flex: 1;
             padding: 3.5rem 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: var(--white);
         }
-        
+
+        .form-title { font-size: 1.75rem; font-weight: 800; letter-spacing: -.5px; color: var(--text-dark); margin-bottom: .35rem; }
+        .form-subtitle { color: var(--text-muted); font-size: .92rem; margin-bottom: 0; }
+
+        /* ── INPUTS ── */
+        .form-label {
+            font-weight: 600;
+            font-size: .82rem;
+            color: var(--text-muted);
+            margin-bottom: .45rem;
+            text-transform: uppercase;
+            letter-spacing: .4px;
+        }
+
         .form-control, .form-select {
             border-radius: 12px;
-            padding: 0.75rem 1.1rem;
-            border: 1px solid #e2e8f0;
-            font-size: 0.95rem;
-            transition: all 0.25s ease;
-            background-color: #f8fafc;
+            padding: .75rem 1rem;
+            border: 1.5px solid var(--border-light);
+            font-size: .92rem;
+            transition: all var(--transition);
+            background: #f8fafc;
+            color: var(--text-dark);
         }
-        
         .form-control:focus, .form-select:focus {
-            background-color: #ffffff;
-            box-shadow: none;
-            border-color: #9d174d;
+            border-color: var(--sena-primary);
+            background: white;
+            box-shadow: 0 0 0 3.5px var(--sena-glow);
+            outline: none;
         }
-        
+        .form-select { cursor: pointer; }
+
         .input-group-text {
-            background-color: #f1f5f9;
-            border: 1px solid #e2e8f0;
+            background: #f1f5f9;
+            border: 1.5px solid var(--border-light);
+            border-right: none;
+            color: var(--text-muted);
             border-radius: 12px 0 0 12px;
-            color: #64748b;
-            padding: 0 1.1rem;
+            padding: .75rem 1rem;
+            transition: all var(--transition);
         }
-        
+        .input-group:focus-within .input-group-text {
+            border-color: var(--sena-primary);
+            color: var(--sena-primary);
+            background: white;
+        }
         .input-group .form-control {
+            border-left: none;
             border-radius: 0 12px 12px 0;
         }
-        
-        .btn-sena-primary {
-            box-shadow: 0 4px 6px -1px rgba(157, 23, 77, 0.2), 0 2px 4px -1px rgba(157, 23, 77, 0.1);
-            }
-        
-        .btn-sena-primary:hover {
-            box-shadow: 0 10px 15px -3px rgba(157, 23, 77, 0.25), 0 4px 6px -2px rgba(157, 23, 77, 0.15);
-            background-color: #9d174d;
-            color: white;
-        }
-        
-        .btn-sena-outline {
-            border: 2px solid white;
-            background: transparent;
-            color: white;
-            padding: 0.75rem 2.2rem;
-            border-radius: 12px;
-            font-weight: 600;
-            transition: all 0.25s ease;
-            text-decoration: none;
-            display: inline-block;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        }
-        
-        .btn-sena-outline:hover {
-            background: white;
-            color: #9d174d;
-            transform: translateY(-2px);
-            box-shadow: none;
-        }
-        
-        .text-sena {
-            color: #9d174d;
-            font-weight: 600;
-            text-shadow: none;
-        }
-        
-        .text-muted-custom {
-            color: #64748b;
-        }
-        
+        .input-group .form-control:focus { border-color: var(--sena-primary); }
+
         .password-toggle {
-            cursor: pointer;
-            border-radius: 0 12px 12px 0 !important;
-            background-color: #f8fafc;
+            border: 1.5px solid var(--border-light);
             border-left: none;
+            border-radius: 0 12px 12px 0;
+            background: #f1f5f9;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: .75rem 1rem;
+            transition: all var(--transition);
         }
-        
-        .password-input {
-            border-right: none;
-            border-radius: 0 !important;
+        .input-group:focus-within .password-toggle {
+            border-color: var(--sena-primary);
+            color: var(--sena-primary);
+            background: white;
+        }
+        .password-input { border-radius: 0 !important; border-left: none; border-right: none; }
+
+        /* ── BUTTON ── */
+        .btn-sena-submit {
+            width: 100%;
+            padding: .85rem;
+            background: linear-gradient(135deg, var(--sena-mid) 0%, var(--sena-primary) 50%, var(--sena-dark) 100%);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: .4px;
+            cursor: pointer;
+            transition: all var(--transition);
+            box-shadow: 0 4px 18px var(--sena-glow);
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-sena-submit::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(255,255,255,.12);
+            opacity: 0;
+            transition: opacity var(--transition);
+        }
+        .btn-sena-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 28px rgba(157,23,77,.38);
+        }
+        .btn-sena-submit:hover::after { opacity: 1; }
+        .btn-sena-submit:active { transform: translateY(0); }
+
+        /* ── ALERTS ── */
+        .alert {
+            border-radius: 14px;
+            border: none;
+            font-size: .88rem;
+            font-weight: 500;
+        }
+        .alert-danger  { background: #fef2f2; color: #991b1b; border-left: 4px solid #ef4444; }
+        .alert-success { background: #f0fdf4; color: #166534; border-left: 4px solid #22c55e; }
+        .alert-warning { background: #fffbeb; color: #92400e; border-left: 4px solid #f59e0b; }
+
+        /* ── LINK ── */
+        .link-sena { color: var(--sena-primary); font-weight: 600; text-decoration: none; transition: color var(--transition); }
+        .link-sena:hover { color: var(--sena-dark); text-decoration: underline; }
+
+        /* ── DIVIDER ── */
+        .form-divider { height: 1px; background: var(--border-light); margin: 1.75rem 0; }
+
+        /* ── MOBILE ── */
+        @media (max-width: 991px) {
+            .brand-panel { display: none !important; }
+            .form-panel  { padding: 2.5rem 2rem; }
+            .login-card  { border-radius: 20px; }
+        }
+        @media (max-width: 480px) {
+            .form-panel { padding: 2rem 1.5rem; }
         }
     </style>
 </head>
 <body>
 
-<div class="container py-5 d-flex justify-content-center">
-    <div class="card login-card">
-        <div class="row g-0">
-            <!-- Brand Panel -->
-            <div class="col-lg-5 brand-panel d-none d-lg-flex">
-                <div class="brand-logo-container">
-                    <i class="bi bi-gear-fill"></i>
+<div class="login-wrapper">
+    <div class="login-card">
+
+        <!-- ── BRAND PANEL ── -->
+        <div class="brand-panel d-none d-lg-flex">
+            <div class="deco-circle"></div>
+            <div class="deco-circle"></div>
+            <div class="deco-circle"></div>
+            <div class="brand-panel-content">
+                <div class="brand-logo">
+                    <i class="bi bi-wallet2"></i>
                 </div>
-                <h2 class="fw-bold mb-3 fs-3">¿No tienes una cuenta?</h2>
-                <p class="mb-4 opacity-90 fw-light">Regístrate ahora para acceder al panel de administración de tus ingresos y herramientas financieras.</p>
-                <a href="{% url 'registro' %}" class="btn-sena-outline">Crear Cuenta</a>
-            </div>
-            
-            <!-- Form Panel -->
-            <div class="col-lg-7 form-panel">
-                <div class="text-center mb-4">
-                    <div class="d-lg-none brand-logo-container mx-auto" style="background-color: #9d174d; color: white;">
-                        <i class="bi bi-gear-fill"></i>
-                    </div>
-                    <h1 class="fw-bold fs-2 text-dark">SENA GDF</h1>
-                    <p class="text-muted-custom">Inicia sesión con tu documento y contraseña</p>
-                </div>
-                
-                <!-- Alerts / Django Messages -->
-                {% if messages %}
-                    {% for message in messages %}
-                        <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show rounded-3" role="alert">
-                            <i class="bi {% if message.tags == 'success' %}bi-check-circle-fill{% else %}bi-exclamation-triangle-fill{% endif %} me-2"></i>
-                            {{ message }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    {% endfor %}
-                {% endif %}
-                
-                <form method="POST" class="mt-4">
-                    {% csrf_token %}
-                    
-                    <!-- Tipo Documento -->
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold text-muted-custom">Tipo de Documento</label>
-                        <select name="tipo_documento" class="form-select" required>
-                            <option value="">Selecciona tu documento</option>
-                            <option value="CC">Cédula de Ciudadanía</option>
-                            <option value="TI">Tarjeta de Identidad</option>
-                            <option value="CE">Cédula de Extranjería</option>
-                        </select>
-                    </div>
-                    
-                    <!-- Numero Documento -->
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold text-muted-custom">Número de Documento</label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
-                            <input type="text" name="numero_documento" class="form-control" placeholder="Ingresa tu número de documento" required pattern="^[a-zA-Z0-9]+$" title="Solo se permiten letras y números.">
-                        </div>
-                    </div>
-                    
-                    <!-- Contrasena -->
-                    <div class="mb-4">
-                        <div class="d-flex justify-content-between align-items-center mb-1">
-                            <label class="form-label fw-semibold text-muted-custom mb-0">Contraseña</label>
-                            <a href="#" class="text-decoration-none small text-sena">¿Olvidaste tu contraseña?</a>
-                        </div>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
-                            <input type="password" id="password" name="password" class="form-control password-input" placeholder="Ingresa tu contraseña" required pattern="^[a-zA-Z0-9!@#\$%\^&\*\-_]+$" title="Caracteres especiales limitados por seguridad.">
-                            <span class="input-group-text password-toggle" onclick="togglePassword()">
-                                <i class="bi bi-eye-slash-fill" id="toggleIcon"></i>
-                            </span>
-                        </div>
-                    </div>
-                    
-                    <!-- Boton Ingresar -->
-                    <button type="submit" class="btn btn-sena-primary w-100 py-3 mb-3">INGRESAR</button>
-                    
-                    <!-- Footer Mobile Links -->
-                    <div class="text-center d-lg-none mt-4">
-                        <p class="text-muted-custom mb-0">¿No tienes cuenta? <a href="{% url 'registro' %}" class="text-decoration-none fw-bold text-sena">Créala aquí</a></p>
-                    </div>
-                </form>
+                <h2>¿Aún no tienes cuenta?</h2>
+                <p>Regístrate ahora para acceder al panel de gestión financiera del SENA y controlar tus metas de ahorro.</p>
+                <a href="{% url 'registro' %}" class="btn-brand-outline">
+                    <i class="bi bi-person-plus-fill me-2"></i>Crear Cuenta
+                </a>
             </div>
         </div>
+
+        <!-- ── FORM PANEL ── -->
+        <div class="form-panel">
+            <div class="mb-4">
+                <h1 class="form-title">Iniciar Sesión</h1>
+                <p class="form-subtitle">Ingresa tu documento y contraseña para continuar</p>
+            </div>
+
+            <!-- Django Messages -->
+            {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show mb-3" role="alert">
+                    <i class="bi {% if message.tags == 'success' %}bi-check-circle-fill{% elif message.tags == 'error' %}bi-x-circle-fill{% else %}bi-exclamation-triangle-fill{% endif %} me-2"></i>
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+                </div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="POST" autocomplete="off" novalidate>
+                {% csrf_token %}
+
+                <!-- Tipo Documento -->
+                <div class="mb-3">
+                    <label for="id_tipo_doc" class="form-label">Tipo de Documento</label>
+                    <select id="id_tipo_doc" name="tipo_documento" class="form-select" required>
+                        <option value="">Selecciona tu tipo de documento</option>
+                        <option value="CC">Cédula de Ciudadanía</option>
+                        <option value="TI">Tarjeta de Identidad</option>
+                        <option value="CE">Cédula de Extranjería</option>
+                    </select>
+                </div>
+
+                <!-- Número Documento -->
+                <div class="mb-3">
+                    <label for="id_num_doc" class="form-label">Número de Documento</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
+                        <input id="id_num_doc" type="text" name="numero_documento" class="form-control" placeholder="Ingresa tu número de documento" required pattern="^[a-zA-Z0-9]+$" title="Solo letras y números.">
+                    </div>
+                </div>
+
+                <!-- Contraseña -->
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <label for="id_password" class="form-label mb-0">Contraseña</label>
+                        <a href="#" class="link-sena" style="font-size:.8rem;">¿Olvidaste tu contraseña?</a>
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+                        <input id="id_password" type="password" name="password" class="form-control password-input" placeholder="Ingresa tu contraseña" required>
+                        <button type="button" class="password-toggle" id="togglePwdBtn" aria-label="Mostrar contraseña">
+                            <i class="bi bi-eye-slash-fill" id="togglePwdIcon"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Botón -->
+                <button id="loginBtn" type="submit" class="btn-sena-submit mb-3">
+                    <i class="bi bi-box-arrow-in-right me-2"></i>INGRESAR AL PANEL
+                </button>
+
+                <!-- Mobile link -->
+                <div class="text-center d-lg-none">
+                    <p class="mb-0" style="font-size:.88rem; color: var(--text-muted);">
+                        ¿No tienes cuenta?
+                        <a href="{% url 'registro' %}" class="link-sena">Regístrate aquí</a>
+                    </p>
+                </div>
+            </form>
+        </div>
+
     </div>
 </div>
 
-<!-- Bootstrap 5 Bundle JS (local) -->
+<!-- Bootstrap JS (local) -->
 <script src="{% static 'sena/js/bootstrap.bundle.min.js' %}"></script>
-
 <script>
-    function togglePassword() {
-        const passwordInput = document.getElementById('password');
-        const toggleIcon = document.getElementById('toggleIcon');
-        if (passwordInput.type === 'password') {
-            passwordInput.type = 'text';
-            toggleIcon.classList.remove('bi-eye-slash-fill');
-            toggleIcon.classList.add('bi-eye-fill');
-        } else {
-            passwordInput.type = 'password';
-            toggleIcon.classList.remove('bi-eye-fill');
-            toggleIcon.classList.add('bi-eye-slash-fill');
-        }
-    }
+    // Toggle contraseña
+    const toggleBtn  = document.getElementById('togglePwdBtn');
+    const pwdInput   = document.getElementById('id_password');
+    const toggleIcon = document.getElementById('togglePwdIcon');
+
+    toggleBtn.addEventListener('click', () => {
+        const show = pwdInput.type === 'password';
+        pwdInput.type = show ? 'text' : 'password';
+        toggleIcon.className = show ? 'bi bi-eye-fill' : 'bi bi-eye-slash-fill';
+    });
+
+    // Loading state en submit
+    document.querySelector('form').addEventListener('submit', () => {
+        const btn = document.getElementById('loginBtn');
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Verificando...';
+        btn.disabled  = true;
+    });
 </script>
 </body>
 </html>
