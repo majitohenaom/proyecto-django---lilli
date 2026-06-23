@@ -62,7 +62,7 @@
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-semibold text-muted-custom small">Número de Documento</label>
-                        <input type="text" name="numero_documento" value="{{ perfil.numero_documento }}" class="form-control" required style="border-radius: 10px;" pattern="^[a-zA-Z0-9]+$" title="Solo se permiten letras y números." pattern="^[a-zA-Z0-9]+$" title="Solo se permiten letras y números." pattern="^[a-zA-Z0-9]+$" title="Solo se permiten letras y números.">
+                        <input type="text" name="numero_documento" value="{{ perfil.numero_documento }}" class="form-control" required style="border-radius: 10px;" pattern="^[a-zA-Z0-9]+$" title="Solo se permiten letras y números.">
                     </div>
                 </div>
                 
@@ -115,12 +115,12 @@
                 
                 <div class="mb-3">
                     <label class="form-label fw-semibold text-muted-custom small">Nueva Contraseña</label>
-                    <input type="password" name="new_password" class="form-control" required placeholder="••••••••" style="border-radius: 10px;">
+                    <input type="password" name="new_password" class="form-control" required placeholder="••••••••" style="border-radius: 10px;" pattern="^[a-zA-Z0-9!@#\$%\^&\*\-_]+$" title="Caracteres especiales limitados por seguridad.">
                 </div>
                 
                 <div class="mb-4">
                     <label class="form-label fw-semibold text-muted-custom small">Confirmar Nueva Contraseña</label>
-                    <input type="password" name="confirm_password" class="form-control" required placeholder="••••••••" style="border-radius: 10px;">
+                    <input type="password" name="confirm_password" class="form-control" required placeholder="••••••••" style="border-radius: 10px;" pattern="^[a-zA-Z0-9!@#\$%\^&\*\-_]+$" title="Caracteres especiales limitados por seguridad.">
                 </div>
                 
                 <button type="submit" class="btn btn-warning border-0 px-4 py-2.5 text-white" style="background-color: #9d174d; border-radius: 12px; font-weight: 600; box-shadow: 0 4px 12px rgba(217,119,6,0.2) !important;">

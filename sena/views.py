@@ -335,11 +335,16 @@ def configuraciones_view(request):
         
         if action == 'update_profile':
             tipo_documento = request.POST.get('tipo_documento')
-            numero_documento = request.POST.get('numero_documento')
+            numero_documento = request.POST.get('numero_documento', '')
             primer_nombre = request.POST.get('primer_nombre')
             primer_apellido = request.POST.get('primer_apellido')
             email = request.POST.get('email')
             numero_ficha = request.POST.get('numero_ficha', '')
+
+            # Capa 2: Validación Regex servidor - campo crítico
+            if not re.match(r'^[a-zA-Z0-9]+$', numero_documento):
+                messages.error(request, 'El número de documento contiene caracteres no permitidos.')
+                return redirect('configuraciones')
             
             # Validation for duplicate document number
             if perfil and numero_documento != perfil.numero_documento:
@@ -363,9 +368,14 @@ def configuraciones_view(request):
             return redirect('configuraciones')
             
         elif action == 'change_password':
-            current_password = request.POST.get('current_password')
-            new_password = request.POST.get('new_password')
-            confirm_password = request.POST.get('confirm_password')
+            current_password = request.POST.get('current_password', '')
+            new_password = request.POST.get('new_password', '')
+            confirm_password = request.POST.get('confirm_password', '')
+
+            # Capa 2: Validación Regex servidor - campo crítico contraseña
+            if not re.match(r'^[a-zA-Z0-9!@#\$%\^&\*\-_]+$', new_password):
+                messages.error(request, 'La nueva contraseña contiene caracteres no permitidos.')
+                return redirect('configuraciones')
             
             if not request.user.check_password(current_password):
                 messages.error(request, 'La contraseña actual es incorrecta.')
@@ -389,6 +399,8 @@ def configuraciones_view(request):
     return render(request, 'configuraciones.html', context)
 
 
+@login_required
 def logout_view(request):
-    logout(request)
+    if request.method == 'POST':
+        logout(request)
     return redirect('login')
