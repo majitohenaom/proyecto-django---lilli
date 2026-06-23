@@ -13,6 +13,8 @@
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- HTMX for SPA Navigation -->
+    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
 
     <style>
         :root {
@@ -356,7 +358,29 @@
     {% block extra_css %}{% endblock %}
 </head>
 
-<body>
+<body hx-boost="true" hx-indicator="#loading-indicator">
+    
+    <!-- Top Progress Bar (Loading Indicator for SPA) -->
+    <style>
+        .htmx-indicator {
+            opacity: 0;
+            transition: opacity 200ms ease-in;
+            height: 3px;
+            background-color: #ff00ff; /* Magenta */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 9999;
+        }
+        .htmx-request .htmx-indicator {
+            opacity: 1;
+        }
+        .htmx-request.htmx-indicator {
+            opacity: 1;
+        }
+    </style>
+    <div id="loading-indicator" class="htmx-indicator"></div>
 
     <!-- HEADER NAVBAR -->
     <nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
