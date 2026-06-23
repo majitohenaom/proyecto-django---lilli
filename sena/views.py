@@ -6,7 +6,9 @@ from django.db.models import Q, Sum
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .models import Perfil, MetaAhorro
+from django.utils import timezone
 import re
+import datetime
 
 def obtener_rol_usuario(user):
     if not user.is_authenticated:
@@ -164,9 +166,13 @@ def usuarios_view(request):
 @login_required
 def metas_view(request):
     rol_usuario = obtener_rol_usuario(request.user)
+    query = request.GET.get('q', '')
     page_number = request.GET.get('page', 1)
 
     todas_metas = MetaAhorro.objects.filter(user=request.user).order_by('-fecha_creacion')
+
+    if query:
+        todas_metas = todas_metas.filter(nombre__icontains=query)
 
     # Calcular totales con una sola consulta a la BD (más eficiente)
     totales = todas_metas.aggregate(
@@ -197,6 +203,7 @@ def metas_view(request):
         'active_tab': 'metas',
         'rol_usuario': rol_usuario,
         'paginator': paginator,
+        'query': query,
     }
     return render(request, 'metas.html', context)
 
@@ -207,17 +214,25 @@ def crear_meta(request):
         nombre = request.POST.get('nombre')
         monto_objetivo = request.POST.get('monto_objetivo')
         monto_actual = request.POST.get('monto_actual') or 0.00
-        fecha_limite = request.POST.get('fecha_limite')
+        fecha_limite_str = request.POST.get('fecha_limite')
         
         try:
+            # Server-side validation to prevent past dates
+            fecha_limite_val = datetime.datetime.strptime(fecha_limite_str, '%Y-%m-%d').date()
+            if fecha_limite_val < timezone.now().date():
+                messages.error(request, 'La fecha límite no puede estar en el pasado.')
+                return redirect('metas')
+                
             MetaAhorro.objects.create(
                 user=request.user,
                 nombre=nombre,
                 monto_objetivo=monto_objetivo,
                 monto_actual=monto_actual,
-                fecha_limite=fecha_limite
+                fecha_limite=fecha_limite_val
             )
             messages.success(request, f'Meta "{nombre}" creada exitosamente.')
+        except ValueError:
+            messages.error(request, 'Formato de fecha límite inválido.')
         except Exception as e:
             messages.error(request, f'Error al crear la meta: {e}')
             
@@ -246,9 +261,21 @@ def editar_meta(request, meta_id):
     if request.method == 'POST':
         try:
             meta = MetaAhorro.objects.get(id=meta_id, user=request.user)
+            fecha_limite_str = request.POST.get('fecha_limite')
+            
+            # Server-side validation to prevent past dates
+            try:
+                fecha_limite_val = datetime.datetime.strptime(fecha_limite_str, '%Y-%m-%d').date()
+                if fecha_limite_val < timezone.now().date():
+                    messages.error(request, 'La fecha límite no puede estar en el pasado.')
+                    return redirect('metas')
+            except ValueError:
+                messages.error(request, 'Formato de fecha límite inválido.')
+                return redirect('metas')
+
             meta.nombre = request.POST.get('nombre')
             meta.monto_objetivo = request.POST.get('monto_objetivo')
-            meta.fecha_limite = request.POST.get('fecha_limite')
+            meta.fecha_limite = fecha_limite_val
             meta.save()
             messages.success(request, f'Meta "{meta.nombre}" actualizada exitosamente.')
         except MetaAhorro.DoesNotExist:

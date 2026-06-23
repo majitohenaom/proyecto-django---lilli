@@ -41,7 +41,6 @@
     }
     
     .goal-card {
-        border: none;
         border-radius: 22px;
         background-color: white;
         box-shadow: var(--card-shadow);
@@ -50,11 +49,76 @@
         transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
         position: relative;
     }
-    
+
     .goal-card:hover {
         transform: translateY(-8px);
         box-shadow: none;
     }
+
+    /* ── Estado: Completada ── */
+    .goal-card.estado-completada {
+        border-color: #86efac;
+    }
+    .goal-card.estado-completada .goal-header {
+        background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+    }
+    .goal-card.estado-completada .progress-bar-custom {
+        background: linear-gradient(90deg, #22c55e 0%, #16a34a 100%);
+    }
+
+    /* ── Estado: Vencida ── */
+    .goal-card.estado-vencida {
+        border-color: #fca5a5;
+    }
+    .goal-card.estado-vencida .goal-header {
+        background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+    }
+    .goal-card.estado-vencida .progress-bar-custom {
+        background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%);
+    }
+
+    /* ── Badge de estado ── */
+    .estado-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+        padding: 0.3rem 0.75rem;
+        border-radius: 50px;
+        text-transform: uppercase;
+    }
+    .badge-completada {
+        background: rgba(255,255,255,0.2);
+        color: white;
+        border: 1px solid rgba(255,255,255,0.35);
+    }
+    .badge-vencida {
+        background: rgba(255,255,255,0.2);
+        color: white;
+        border: 1px solid rgba(255,255,255,0.35);
+    }
+    .badge-en-progreso {
+        background: rgba(255,255,255,0.2);
+        color: white;
+        border: 1px solid rgba(255,255,255,0.35);
+    }
+
+    /* ── Info días ── */
+    .dias-info {
+        font-size: 0.78rem;
+        font-weight: 600;
+        padding: 0.4rem 0.8rem;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+    .dias-ok   { background: #f0fdf4; color: #15803d; }
+    .dias-warn { background: #fffbeb; color: #b45309; }
+    .dias-venc { background: #fef2f2; color: #dc2626; }
+    .dias-done { background: #f0fdf4; color: #15803d; }
     
     .progress-custom {
         height: 10px;
@@ -95,6 +159,27 @@
         border-color: var(--sena-primary) !important;
         box-shadow: none;
         background-color: white !important;
+    }
+
+    /* Styling the search form */
+    .premium-input-group {
+        border-radius: 14px;
+        overflow: hidden;
+        border: 1.5px solid rgba(226,232,240,0.8);
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        background-color: #f8fafc;
+    }
+    .premium-input-group:focus-within {
+        border-color: var(--sena-primary) !important;
+        box-shadow: none;
+        background-color: white !important;
+    }
+    .premium-input-group input {
+        border: none !important;
+        background-color: transparent !important;
+    }
+    .premium-input-group input:focus {
+        box-shadow: none !important;
     }
 </style>
 {% endblock %}
@@ -160,65 +245,136 @@
     </div>
 </div>
 
+<!-- Search Bar -->
+<div class="card premium-card mb-5 p-4" style="background-color: white; border-radius: 20px; border: none; box-shadow: var(--card-shadow);">
+    <form method="GET" class="row g-3 align-items-center">
+        <div class="col-md-10 col-lg-11">
+            <div class="input-group premium-input-group">
+                <span class="input-group-text bg-transparent border-0 text-muted"><i class="bi bi-search"></i></span>
+                <input type="text" name="q" value="{{ query|default:'' }}" class="form-control" placeholder="Buscar meta por nombre..." style="font-size: 0.95rem; padding: 0.7rem 1rem;">
+            </div>
+        </div>
+        <div class="col-md-2 col-lg-1">
+            <button type="submit" class="btn text-white w-100 border-0 py-2.5" style="background: linear-gradient(135deg, var(--sena-primary) 0%, var(--sena-purple) 100%); border-radius: 12px; font-weight: 600; box-shadow: none;">
+                Buscar
+            </button>
+        </div>
+    </form>
+</div>
+
 <!-- Savings Goals Grid -->
 <div class="row g-4 animated-fade-in">
     {% for meta in metas %}
     <div class="col-md-6 col-lg-4">
-        <div class="card goal-card h-100 d-flex flex-column">
-            <!-- Goal Header -->
+        <div class="card goal-card h-100 d-flex flex-column estado-{{ meta.estado }}">
+
+            <!-- Goal Header (color cambia según estado) -->
             <div class="goal-header d-flex justify-content-between align-items-start">
                 <div>
-                    <h5 class="fw-bold text-dark mb-1" style="letter-spacing: -0.3px;">{{ meta.nombre }}</h5>
-                    <span class="text-secondary small d-flex align-items-center gap-1.5" style="font-size: 0.8rem;">
-                        <i class="bi bi-calendar3 text-muted"></i> <span class="text-muted">Límite:</span> <strong class="text-dark">{{ meta.fecha_limite|date:"d M Y" }}</strong>
+                    <h5 class="fw-bold mb-1" style="letter-spacing: -0.3px; color: #fff;">{{ meta.nombre }}</h5>
+                    <span class="d-flex align-items-center gap-1" style="font-size: 0.8rem; color: rgba(255,255,255,0.75);">
+                        <i class="bi bi-calendar3"></i>
+                        <span>Límite:</span>
+                        <strong style="color: #fff;">{{ meta.fecha_limite|date:"d M Y" }}</strong>
                     </span>
                 </div>
-                <!-- Dropdown actions -->
-                <div class="dropdown">
-                    <button class="btn btn-link text-muted p-1 border-0 rounded-circle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; transition: background 0.2s;" onmouseover="this.style.background='rgba(0,0,0,0.04)'" onmouseout="this.style.background='transparent'">
-                        <i class="bi bi-three-dots-vertical fs-5"></i>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end border shadow-sm" style="border-radius: 12px;">
-                        <li>
-                            <button class="dropdown-item d-flex align-items-center gap-2 py-2 edit-meta-btn" style="font-size: 0.88rem;"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#modalEditarMeta"
-                                    data-id="{{ meta.id }}"
-                                    data-nombre="{{ meta.nombre }}"
-                                    data-monto-objetivo="{{ meta.monto_objetivo }}"
-                                    data-fecha-limite="{{ meta.fecha_limite|date:'Y-m-d' }}">
-                                <i class="bi bi-pencil text-secondary"></i> Editar Meta
-                            </button>
-                        </li>
-                        <li>
-                            <form method="POST" action="{% url 'eliminar_meta' meta.id %}" onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta meta? Esta acción no se puede deshacer.');">
-                                {% csrf_token %}
-                                <button type="submit" class="dropdown-item text-danger d-flex align-items-center gap-2 py-2" style="font-size: 0.88rem;">
-                                    <i class="bi bi-trash-fill"></i> Eliminar Meta
+
+                <div class="d-flex flex-column align-items-end gap-2">
+                    <!-- Badge de Estado -->
+                    {% if meta.estado == 'completada' %}
+                        <span class="estado-badge badge-completada">
+                            <i class="bi bi-patch-check-fill"></i> ¡Completada! 🎉
+                        </span>
+                    {% elif meta.estado == 'vencida' %}
+                        <span class="estado-badge badge-vencida">
+                            <i class="bi bi-exclamation-triangle-fill"></i> Vencida
+                        </span>
+                    {% else %}
+                        <span class="estado-badge badge-en-progreso">
+                            <i class="bi bi-hourglass-split"></i> En Progreso
+                        </span>
+                    {% endif %}
+
+                    <!-- Dropdown actions -->
+                    <div class="dropdown">
+                        <button class="btn btn-link p-1 border-0 rounded-circle" type="button"
+                                data-bs-toggle="dropdown" aria-expanded="false"
+                                style="width:30px;height:30px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.75);transition:background 0.2s;"
+                                onmouseover="this.style.background='rgba(255,255,255,0.15)'"
+                                onmouseout="this.style.background='transparent'">
+                            <i class="bi bi-three-dots-vertical"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end border shadow-sm" style="border-radius: 12px;">
+                            <li>
+                                <button class="dropdown-item d-flex align-items-center gap-2 py-2 edit-meta-btn"
+                                        style="font-size: 0.88rem;"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#modalEditarMeta"
+                                        data-id="{{ meta.id }}"
+                                        data-nombre="{{ meta.nombre }}"
+                                        data-monto-objetivo="{{ meta.monto_objetivo }}"
+                                        data-fecha-limite="{{ meta.fecha_limite|date:'Y-m-d' }}">
+                                    <i class="bi bi-pencil text-secondary"></i> Editar Meta
                                 </button>
-                            </form>
-                        </li>
-                    </ul>
+                            </li>
+                            <li>
+                                <form method="POST" action="{% url 'eliminar_meta' meta.id %}"
+                                      onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta meta?');">
+                                    {% csrf_token %}
+                                    <button type="submit" class="dropdown-item text-danger d-flex align-items-center gap-2 py-2" style="font-size: 0.88rem;">
+                                        <i class="bi bi-trash-fill"></i> Eliminar Meta
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
-            
+
             <!-- Goal Content -->
             <div class="card-body p-4 flex-grow-1 d-flex flex-column justify-content-between">
+
+                <!-- Info de días / mensaje de estado -->
+                <div class="mb-3">
+                    {% if meta.estado == 'completada' %}
+                        <span class="dias-info dias-done w-100 d-flex justify-content-center">
+                            <i class="bi bi-trophy-fill"></i> ¡Meta alcanzada! ¡Felicitaciones!
+                        </span>
+                    {% elif meta.estado == 'vencida' %}
+                        <span class="dias-info dias-venc w-100 d-flex justify-content-center">
+                            <i class="bi bi-calendar-x-fill"></i>
+                            Venció hace {{ meta.dias_vencidos }} día{{ meta.dias_vencidos|pluralize }}
+                        </span>
+                    {% else %}
+                        {% if meta.dias_restantes <= 7 %}
+                            <span class="dias-info dias-warn w-100 d-flex justify-content-center">
+                                <i class="bi bi-alarm-fill"></i> Faltan {{ meta.dias_restantes }} día{{ meta.dias_restantes|pluralize }} — ¡Apúrate!
+                            </span>
+                        {% else %}
+                            <span class="dias-info dias-ok w-100 d-flex justify-content-center">
+                                <i class="bi bi-calendar-check"></i> Faltan {{ meta.dias_restantes }} días
+                            </span>
+                        {% endif %}
+                    {% endif %}
+                </div>
+
                 <!-- Money Details -->
                 <div class="d-flex justify-content-between align-items-baseline mb-3">
                     <div>
                         <span class="text-secondary small d-block uppercase" style="letter-spacing: 0.5px; font-size: 0.7rem;">Ahorrado</span>
-                        <span class="fs-4 fw-bold" style="color: var(--sena-primary); letter-spacing: -0.5px;">${{ meta.monto_actual|intcomma }}</span>
+                        <span class="fs-4 fw-bold" style="{% if meta.estado == 'completada' %}color:#16a34a{% elif meta.estado == 'vencida' %}color:#dc2626{% else %}color:var(--sena-primary){% endif %}; letter-spacing: -0.5px;">
+                            ${{ meta.monto_actual|intcomma }}
+                        </span>
                     </div>
                     <div class="text-end">
                         <span class="text-secondary small d-block uppercase" style="letter-spacing: 0.5px; font-size: 0.7rem;">Objetivo</span>
                         <span class="fw-bold text-secondary" style="font-size: 1.05rem;">${{ meta.monto_objetivo|intcomma }}</span>
                     </div>
                 </div>
-                
+
                 <!-- Progress Bar -->
                 <div class="mb-4">
-                    <div class="d-flex justify-content-between align-items-center mb-1.5">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
                         <span class="text-secondary small">Progreso alcanzado</span>
                         <span class="fw-bold text-dark" style="font-size: 0.85rem;">{{ meta.progreso }}%</span>
                     </div>
@@ -226,20 +382,33 @@
                         <div class="progress-bar-custom" style="width: {{ meta.progreso }}%;"></div>
                     </div>
                 </div>
-                
-                <!-- Quick Actions -->
+
+                <!-- Botón de acción según estado -->
                 <div>
-                    <button class="btn btn-sm w-100 py-2.5 d-flex align-items-center justify-content-center gap-2 abono-btn" 
-                            style="color: var(--sena-primary); border-color: var(--sena-primary); border-radius: 12px; font-weight: 600; border-width: 1.5px; transition: all 0.2s ease;"
-                            data-bs-toggle="modal"
-                            data-bs-target="#modalAbonar"
-                            data-id="{{ meta.id }}"
-                            data-nombre="{{ meta.nombre }}"
-                            onmouseover="this.style.background='var(--sena-primary)'; this.style.color='white'; this.style.borderColor='var(--sena-primary)';"
-                            onmouseout="this.style.background='transparent'; this.style.color='var(--sena-primary)'; this.style.borderColor='var(--sena-primary)';">
-                        <i class="bi bi-plus-circle-fill"></i> Registar Abono
-                    </button>
+                    {% if meta.estado == 'completada' %}
+                        <div class="text-center py-2" style="color: #16a34a; font-weight: 600; font-size: 0.9rem;">
+                            <i class="bi bi-check-circle-fill me-2"></i>Objetivo Completado
+                        </div>
+                    {% elif meta.estado == 'vencida' %}
+                        <button class="btn btn-sm w-100 py-2 d-flex align-items-center justify-content-center gap-2 abono-btn"
+                                style="color: #dc2626; border-color: #dc2626; border-radius: 12px; font-weight: 600; border-width: 1.5px; opacity: 0.7; cursor: not-allowed;"
+                                disabled>
+                            <i class="bi bi-lock-fill"></i> Meta Vencida
+                        </button>
+                    {% else %}
+                        <button class="btn btn-sm w-100 py-2 d-flex align-items-center justify-content-center gap-2 abono-btn"
+                                style="color: var(--sena-primary); border-color: var(--sena-primary); border-radius: 12px; font-weight: 600; border-width: 1.5px; transition: all 0.2s ease;"
+                                data-bs-toggle="modal"
+                                data-bs-target="#modalAbonar"
+                                data-id="{{ meta.id }}"
+                                data-nombre="{{ meta.nombre }}"
+                                onmouseover="this.style.background='var(--sena-primary)'; this.style.color='white';"
+                                onmouseout="this.style.background='transparent'; this.style.color='var(--sena-primary)';">
+                            <i class="bi bi-plus-circle-fill"></i> Registrar Abono
+                        </button>
+                    {% endif %}
                 </div>
+
             </div>
         </div>
     </div>
@@ -267,13 +436,13 @@
         <ul class="pagination mb-0" style="gap: 4px;">
             {% if metas.has_previous %}
             <li class="page-item">
-                <a class="page-link" href="?page=1"
+                <a class="page-link" href="?page=1{% if query %}&q={{ query }}{% endif %}"
                    style="border-radius: 10px; border: 1.5px solid #e2e8f0; color: var(--sena-primary); font-weight: 600;">
                     <i class="bi bi-chevron-double-left"></i>
                 </a>
             </li>
             <li class="page-item">
-                <a class="page-link" href="?page={{ metas.previous_page_number }}"
+                <a class="page-link" href="?page={{ metas.previous_page_number }}{% if query %}&q={{ query }}{% endif %}"
                    style="border-radius: 10px; border: 1.5px solid #e2e8f0; color: var(--sena-primary); font-weight: 600;">
                     <i class="bi bi-chevron-left"></i>
                 </a>
@@ -287,7 +456,7 @@
                 </li>
                 {% elif num > metas.number|add:'-3' and num < metas.number|add:'3' %}
                 <li class="page-item">
-                    <a class="page-link" href="?page={{ num }}"
+                    <a class="page-link" href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}"
                        style="border-radius: 10px; border: 1.5px solid #e2e8f0; color: var(--slate-700); font-weight: 500;">{{ num }}</a>
                 </li>
                 {% endif %}
@@ -295,13 +464,13 @@
 
             {% if metas.has_next %}
             <li class="page-item">
-                <a class="page-link" href="?page={{ metas.next_page_number }}"
+                <a class="page-link" href="?page={{ metas.next_page_number }}{% if query %}&q={{ query }}{% endif %}"
                    style="border-radius: 10px; border: 1.5px solid #e2e8f0; color: var(--sena-primary); font-weight: 600;">
                     <i class="bi bi-chevron-right"></i>
                 </a>
             </li>
             <li class="page-item">
-                <a class="page-link" href="?page={{ paginator.num_pages }}"
+                <a class="page-link" href="?page={{ paginator.num_pages }}{% if query %}&q={{ query }}{% endif %}"
                    style="border-radius: 10px; border: 1.5px solid #e2e8f0; color: var(--sena-primary); font-weight: 600;">
                     <i class="bi bi-chevron-double-right"></i>
                 </a>
@@ -350,7 +519,7 @@
                     <!-- Fecha Límite -->
                     <div class="mb-3">
                         <label class="form-label fw-semibold text-muted-custom small">Fecha Límite</label>
-                        <input type="date" name="fecha_limite" class="form-control" required style="border-radius: 10px;">
+                        <input type="date" id="createFechaLimite" name="fecha_limite" class="form-control" required style="border-radius: 10px;">
                     </div>
                 </div>
                 <div class="modal-footer border-top-0 px-4 pb-4 pt-0 d-flex gap-2">
@@ -431,6 +600,19 @@
 {% block extra_js %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Enforce minimum date validation on the client side (prevent selecting past dates)
+        const todayStr = new Date().toISOString().split('T')[0];
+        
+        const createFechaInput = document.getElementById('createFechaLimite');
+        if (createFechaInput) {
+            createFechaInput.min = todayStr;
+        }
+        
+        const editFechaInput = document.getElementById('editFechaLimite');
+        if (editFechaInput) {
+            editFechaInput.min = todayStr;
+        }
+
         const modalEditarMeta = document.getElementById('modalEditarMeta');
         if (modalEditarMeta) {
             modalEditarMeta.addEventListener('show.bs.modal', function(event) {

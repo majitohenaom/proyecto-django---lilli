@@ -3,6 +3,7 @@ from django.db import models
 # Create your models here.
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 class Perfil(models.Model):
     TIPO_DOCUMENTO_CHOICES = [
@@ -43,6 +44,26 @@ class MetaAhorro(models.Model):
         if self.monto_objetivo > 0:
             return min(int((self.monto_actual / self.monto_objetivo) * 100), 100)
         return 0
+
+    @property
+    def dias_restantes(self):
+        delta = self.fecha_limite - timezone.now().date()
+        return delta.days
+
+    @property
+    def dias_vencidos(self):
+        if self.dias_restantes < 0:
+            return abs(self.dias_restantes)
+        return 0
+
+    @property
+    def estado(self):
+        if self.monto_actual >= self.monto_objetivo:
+            return 'completada'
+        elif self.fecha_limite < timezone.now().date():
+            return 'vencida'
+        else:
+            return 'en_progreso'
 
     def __str__(self):
         return f"{self.nombre} - {self.user.username}"
