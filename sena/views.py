@@ -5,6 +5,7 @@ from django.contrib import messages
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from .models import Perfil, MetaAhorro
+import re
 
 def obtener_rol_usuario(user):
     if not user.is_authenticated:
@@ -23,6 +24,15 @@ def login_view(request):
     if request.method == 'POST':
         numero = request.POST.get('numero_documento')
         password = request.POST.get('password')
+
+        # Limit special characters
+        if not re.match(r'^[a-zA-Z0-9]+$', numero):
+            messages.error(request, 'El documento contiene caracteres no permitidos.')
+            return render(request, 'login.html')
+            
+        if not re.match(r'^[a-zA-Z0-9!@#\$%\^&\*\-_]+$', password):
+            messages.error(request, 'La contraseña contiene caracteres no permitidos.')
+            return render(request, 'login.html')
 
         user = authenticate(request, username=numero, password=password)
 
@@ -51,6 +61,15 @@ def registro_view(request):
         password2 = request.POST.get('password2')
         rol = request.POST.get('rol')
         numero_ficha = request.POST.get('numero_ficha', '')
+
+        # Limit special characters
+        if not re.match(r'^[a-zA-Z0-9]+$', numero):
+            messages.error(request, 'El documento contiene caracteres no permitidos.')
+            return redirect('registro')
+            
+        if not re.match(r'^[a-zA-Z0-9!@#\$%\^&\*\-_]+$', password):
+            messages.error(request, 'La contraseña contiene caracteres no permitidos.')
+            return redirect('registro')
 
         if password != password2:
             messages.error(request, "Las contraseñas no coinciden.")

@@ -14,7 +14,7 @@
     <style>
         body {
             font-family: 'Outfit', sans-serif;
-            background-color: #d946ef;
+            background-color: #ffffff;
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -34,7 +34,7 @@
         }
         
         .brand-panel {
-            background-color: #d946ef;
+            background-color: #9d174d;
             box-shadow: none;
             color: white;
             display: flex;
@@ -108,16 +108,16 @@
         .form-control:focus, .form-select:focus {
             background-color: #ffffff;
             box-shadow: none;
-            border-color: #d946ef;
+            border-color: #9d174d;
         }
         
         .btn-sena-primary {
-            box-shadow: 0 4px 6px -1px rgba(217, 70, 239, 0.2), 0 2px 4px -1px rgba(217, 70, 239, 0.1);
+            box-shadow: 0 4px 6px -1px rgba(157, 23, 77, 0.2), 0 2px 4px -1px rgba(157, 23, 77, 0.1);
             }
         
         .btn-sena-primary:hover {
-            box-shadow: 0 10px 15px -3px rgba(217, 70, 239, 0.25), 0 4px 6px -2px rgba(217, 70, 239, 0.15);
-            background-color: #d946ef;
+            box-shadow: 0 10px 15px -3px rgba(157, 23, 77, 0.25), 0 4px 6px -2px rgba(157, 23, 77, 0.15);
+            background-color: #9d174d;
             color: white;
         }
         
@@ -136,13 +136,13 @@
         
         .btn-sena-outline:hover {
             background: white;
-            color: #d946ef;
+            color: #9d174d;
             transform: translateY(-2px);
             box-shadow: none;
         }
         
         .text-sena {
-            color: #d946ef;
+            color: #9d174d;
             font-weight: 600;
             text-shadow: none;
         }
@@ -225,7 +225,7 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-semibold text-muted-custom small">Número de Documento</label>
-                            <input type="text" name="numero_documento" class="form-control" placeholder="Número de documento (servirá como usuario)" required>
+                            <input type="text" name="numero_documento" class="form-control" placeholder="Número de documento (servirá como usuario)" required pattern="^[a-zA-Z0-9]+$" title="Solo se permiten letras y números.">
                         </div>
                     </div>
                     
@@ -237,7 +237,7 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-semibold text-muted-custom small">Contraseña</label>
-                            <input type="password" name="password" class="form-control" placeholder="Crea tu contraseña" required>
+                            <input type="password" name="password" class="form-control" placeholder="Crea tu contraseña" required pattern="^[a-zA-Z0-9!@#\$%\^&\*\-_]+$" title="Caracteres especiales limitados por seguridad.">
                         </div>
                     </div>
                     
@@ -245,7 +245,7 @@
                     <div class="row g-3 mb-3">
                         <div class="col-md-6">
                             <label class="form-label fw-semibold text-muted-custom small">Confirmar Contraseña</label>
-                            <input type="password" name="password2" class="form-control" placeholder="Repite tu contraseña" required>
+                            <input type="password" name="password2" class="form-control" placeholder="Repite tu contraseña" required pattern="^[a-zA-Z0-9!@#\$%\^&\*\-_]+$" title="Caracteres especiales limitados por seguridad.">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-semibold text-muted-custom small">Rol en el SENA</label>
