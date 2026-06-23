@@ -71,3 +71,18 @@ class MetaAhorro(models.Model):
     class Meta:
         verbose_name = 'Meta de Ahorro'
         verbose_name_plural = 'Metas de Ahorro'
+
+
+class Abono(models.Model):
+    meta = models.ForeignKey(MetaAhorro, on_delete=models.CASCADE, related_name='abonos')
+    cantidad = models.DecimalField(max_digits=12, decimal_places=2)
+    fecha = models.DateTimeField(auto_now_add=True)
+    notas = models.CharField(max_length=255, blank=True, null=True)
+
+    def __str__(self):
+        return f"Abono de ${self.cantidad} a '{self.meta.nombre}' el {self.fecha.strftime('%d/%m/%Y')}"
+
+    class Meta:
+        verbose_name = 'Abono'
+        verbose_name_plural = 'Abonos'
+        ordering = ['-fecha']

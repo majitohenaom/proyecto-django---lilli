@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.db.models import Q, Sum
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from .models import Perfil, MetaAhorro
+from .models import Perfil, MetaAhorro, Abono
 from django.utils import timezone
 import re
 import datetime
@@ -23,16 +23,24 @@ def obtener_rol_usuario(user):
 def login_view(request):
     if request.user.is_authenticated:
         return redirect('dashboard')
-        
+
+    TIPO_DOC_CHOICES = ['CC', 'TI', 'CE']
+
     if request.method == 'POST':
-        numero = request.POST.get('numero_documento', '')
+        tipo_documento = request.POST.get('tipo_documento', '').strip()
+        numero = request.POST.get('numero_documento', '').strip()
         password = request.POST.get('password', '')
+
+        # Validar tipo de documento seleccionado
+        if tipo_documento not in TIPO_DOC_CHOICES:
+            messages.error(request, 'Debes seleccionar un tipo de documento válido.')
+            return render(request, 'login.html')
 
         # Limit special characters
         if not re.match(r'^[a-zA-Z0-9]+$', numero):
             messages.error(request, 'El documento contiene caracteres no permitidos.')
             return render(request, 'login.html')
-            
+
         if not re.match(r'^[a-zA-Z0-9!@#\$%\^&\*\-_]+$', password):
             messages.error(request, 'La contraseña contiene caracteres no permitidos.')
             return render(request, 'login.html')
@@ -40,6 +48,15 @@ def login_view(request):
         user = authenticate(request, username=numero, password=password)
 
         if user is not None:
+            # Verificar que el tipo de documento coincida con el registrado
+            try:
+                perfil = user.perfil
+                if perfil.tipo_documento != tipo_documento:
+                    messages.error(request, 'El tipo de documento no coincide con el registrado.')
+                    return render(request, 'login.html')
+            except Perfil.DoesNotExist:
+                pass  # Superusuarios sin perfil pueden iniciar sesión normalmente
+
             login(request, user)
             return redirect('dashboard')
         else:
@@ -245,6 +262,20 @@ def actualizar_progreso_meta(request, meta_id):
         try:
             meta = MetaAhorro.objects.get(id=meta_id, user=request.user)
             cantidad_abono = float(request.POST.get('cantidad_abono', 0))
+            notas = request.POST.get('notas', '').strip()
+
+            if cantidad_abono <= 0:
+                messages.error(request, 'El monto del abono debe ser mayor a cero.')
+                return redirect('metas')
+
+            # Registrar abono en el historial
+            Abono.objects.create(
+                meta=meta,
+                cantidad=cantidad_abono,
+                notas=notas if notas else None
+            )
+
+            # Actualizar monto actual de la meta
             meta.monto_actual = float(meta.monto_actual) + cantidad_abono
             meta.save()
             messages.success(request, f'Se abonaron ${cantidad_abono:,.2f} a la meta "{meta.nombre}".')
@@ -252,7 +283,7 @@ def actualizar_progreso_meta(request, meta_id):
             messages.error(request, 'Meta no encontrada.')
         except Exception as e:
             messages.error(request, f'Error al registrar el abono: {e}')
-            
+
     return redirect('metas')
 
 

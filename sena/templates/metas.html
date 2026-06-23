@@ -384,7 +384,20 @@
                 </div>
 
                 <!-- Botón de acción según estado -->
-                <div>
+                <div class="d-flex gap-2 flex-column">
+                    <!-- Botón Historial -->
+                    <button class="btn btn-sm w-100 py-2 d-flex align-items-center justify-content-center gap-2 historial-btn"
+                            style="color: #475569; border-color: #e2e8f0; border-radius: 12px; font-weight: 600; border-width: 1.5px; transition: all 0.2s ease;"
+                            data-bs-toggle="modal"
+                            data-bs-target="#modalHistorial"
+                            data-id="{{ meta.id }}"
+                            data-nombre="{{ meta.nombre }}"
+                            data-abonos='[{% for a in meta.abonos.all %}{"fecha":"{{ a.fecha|date:"d/m/Y H:i" }}","cantidad":{{ a.cantidad }},"notas":"{{ a.notas|default:""|escapejs }}"}{% if not forloop.last %},{% endif %}{% endfor %}]'
+                            onmouseover="this.style.background='#f1f5f9';"
+                            onmouseout="this.style.background='transparent';">
+                        <i class="bi bi-clock-history"></i> Ver Historial
+                    </button>
+
                     {% if meta.estado == 'completada' %}
                         <div class="text-center py-2" style="color: #16a34a; font-weight: 600; font-size: 0.9rem;">
                             <i class="bi bi-check-circle-fill me-2"></i>Objetivo Completado
@@ -547,8 +560,12 @@
                         <label class="form-label fw-semibold text-muted-custom small">Cantidad a Abonar (COP)</label>
                         <div class="input-group">
                             <span class="input-group-text bg-light text-muted border-end-0" style="border-radius: 10px 0 0 10px;">$</span>
-                            <input type="number" step="0.01" name="cantidad_abono" class="form-control border-start-0" placeholder="Ej. 50000" required style="border-radius: 0 10px 10px 0;">
+                            <input type="number" step="0.01" min="0.01" name="cantidad_abono" class="form-control border-start-0" placeholder="Ej. 50000" required style="border-radius: 0 10px 10px 0;">
                         </div>
+                    </div>
+                    <div class="mb-1">
+                        <label class="form-label fw-semibold text-muted-custom small">Notas (Opcional)</label>
+                        <input type="text" name="notas" class="form-control" placeholder="Ej. Quincena de junio" maxlength="255" style="border-radius: 10px;">
                     </div>
                 </div>
                 <div class="modal-footer border-top-0 px-4 pb-4 pt-0 d-flex gap-2">
@@ -595,7 +612,33 @@
         </div>
     </div>
 </div>
+
+<!-- MODAL: Historial de Abonos -->
+<div class="modal fade" id="modalHistorial" tabindex="-1" aria-labelledby="modalHistorialLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+            <div class="modal-header border-bottom-0 pb-0 ps-4 pt-4">
+                <div>
+                    <h5 class="modal-title fw-bold text-dark fs-4" id="modalHistorialLabel">
+                        <i class="bi bi-clock-history me-2" style="color: var(--sena-primary);"></i>Historial de Abonos
+                    </h5>
+                    <p class="text-muted small mb-0" id="historialMetaNombre"></p>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body px-4 py-3">
+                <div id="historialContenido">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+            <div class="modal-footer border-top-0 px-4 pb-4 pt-0">
+                <button type="button" class="btn btn-light px-4 py-2" data-bs-dismiss="modal" style="border-radius: 10px;">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
+
 
 {% block extra_js %}
 <script>
@@ -640,6 +683,65 @@
                 
                 document.getElementById('abonoMetaNombre').textContent = nombre;
                 document.getElementById('formAbonar').action = `/dashboard/metas/actualizar/${id}/`;
+            });
+        }
+
+        // Historial de Abonos modal
+        const modalHistorial = document.getElementById('modalHistorial');
+        if (modalHistorial) {
+            modalHistorial.addEventListener('show.bs.modal', function(event) {
+                const button = event.relatedTarget;
+                const nombre = button.getAttribute('data-nombre');
+                const abonosRaw = button.getAttribute('data-abonos');
+                let abonos = [];
+                try { abonos = JSON.parse(abonosRaw); } catch(e) { abonos = []; }
+
+                document.getElementById('historialMetaNombre').textContent = 'Meta: ' + nombre;
+
+                const contenedor = document.getElementById('historialContenido');
+                if (!abonos || abonos.length === 0) {
+                    contenedor.innerHTML = `
+                        <div class="text-center py-5 text-muted">
+                            <i class="bi bi-inbox fs-1 d-block mb-2 text-black-50"></i>
+                            <p class="mb-0 fw-semibold">Sin abonos registrados</p>
+                            <p class="small">Registra tu primer abono usando el botón "Registrar Abono".</p>
+                        </div>`;
+                    return;
+                }
+
+                let totalAbonos = abonos.reduce((sum, a) => sum + parseFloat(a.cantidad), 0);
+                let filas = abonos.map((a, i) => `
+                    <tr>
+                        <td class="text-center text-muted small fw-semibold" style="width:40px;">${abonos.length - i}</td>
+                        <td><span class="badge rounded-pill" style="background:#f0fdf4;color:#15803d;font-weight:600;font-size:0.78rem;padding:0.35rem 0.7rem;">
+                            <i class="bi bi-calendar2-check me-1"></i>${a.fecha}
+                        </span></td>
+                        <td class="fw-bold" style="color: var(--sena-primary); font-size:1.0rem;">
+                            $${parseFloat(a.cantidad).toLocaleString('es-CO', {minimumFractionDigits:2, maximumFractionDigits:2})}
+                        </td>
+                        <td class="text-muted small">${a.notas || '<em class="text-muted opacity-50">—</em>'}</td>
+                    </tr>`).join('');
+
+                contenedor.innerHTML = `
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-3" style="border-collapse: separate; border-spacing: 0 4px;">
+                            <thead>
+                                <tr style="font-size:0.75rem; text-transform:uppercase; letter-spacing:0.5px; color:#94a3b8;">
+                                    <th>#</th>
+                                    <th>Fecha</th>
+                                    <th>Monto</th>
+                                    <th>Notas</th>
+                                </tr>
+                            </thead>
+                            <tbody>${filas}</tbody>
+                        </table>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center px-1 pt-2 border-top">
+                        <span class="text-muted small">${abonos.length} abono${abonos.length !== 1 ? 's' : ''} registrado${abonos.length !== 1 ? 's' : ''}</span>
+                        <span class="fw-bold" style="color:var(--sena-primary); font-size:1.05rem;">
+                            Total: $${totalAbonos.toLocaleString('es-CO', {minimumFractionDigits:2, maximumFractionDigits:2})}
+                        </span>
+                    </div>`;
             });
         }
     });

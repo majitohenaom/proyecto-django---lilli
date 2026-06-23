@@ -232,6 +232,15 @@
         }
         .form-select { cursor: pointer; }
 
+        /* Select inside input-group */
+        .input-group .form-select {
+            border-left: none;
+            border-radius: 0 12px 12px 0;
+        }
+        .input-group:focus-within .form-select {
+            border-color: var(--sena-primary);
+        }
+
         .input-group-text {
             background: #f1f5f9;
             border: 1.5px solid var(--border-light);
@@ -372,6 +381,20 @@
 
             <form method="POST" autocomplete="off" novalidate>
                 {% csrf_token %}
+
+                <!-- Tipo de Documento -->
+                <div class="mb-3">
+                    <label for="id_tipo_doc" class="form-label">Tipo de Documento</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-card-list"></i></span>
+                        <select id="id_tipo_doc" name="tipo_documento" class="form-select" required>
+                            <option value="" disabled selected>Selecciona tu tipo de documento</option>
+                            <option value="CC">Cédula de Ciudadanía (CC)</option>
+                            <option value="TI">Tarjeta de Identidad (TI)</option>
+                            <option value="CE">Cédula de Extranjería (CE)</option>
+                        </select>
+                    </div>
+                </div>
 
                 <!-- Número Documento -->
                 <div class="mb-3">
